@@ -12,7 +12,7 @@ class APIPenggunaController extends Controller
 {
     public function register(Request $request){
         $response = array();
-        $id = app(GenerateIDController::class)->generatePengguna();
+        $id = app(IDGeneratorController::class)->generatePengguna();
         $nama = $request->input('nama');
         $email = $request->input('email');
         $password = $request->input('password');
@@ -57,25 +57,19 @@ class APIPenggunaController extends Controller
 
         $query = Pengguna::select()
         ->where('email', '=' , $email)
-        ->where('password', '=' , $password)
-        ->get();
+        ->where('password', '=' , $password);
 
-        $queryCount = Pengguna::select()
-        ->where('email', '=' , $email)
-        ->where('password', '=' , $password)
-        ->count();
-
-        if($queryCount > 0 ){
-            foreach($query as $item){
+        if($query->count() > 0 ){
+            foreach($query->get() as $item){
                 $kemampuan= Kemampuan::select()->where('idUser', '=', $item->id)->count();
                 $berkeahlian= Berkeahlian::select()->where('idUser', '=', $item->id)->count();
                 $response['error'] = FALSE;
                 $response['message'] = "login successfull";
-                $response['data'] = $item;
+                $response['pengguna'] = $item;
                 if($kemampuan > 0 && $berkeahlian > 0){
-                    $response['data']['complete'] = TRUE;
+                    $response['pengguna']['complete'] = TRUE;
                 }else{
-                    $response['data']['complete'] = FALSE;
+                    $response['pengguna']['complete'] = FALSE;
                 }
             }
         }else{
@@ -123,6 +117,75 @@ class APIPenggunaController extends Controller
         }else{
             $response['error'] = TRUE;
             $response['message'] = "Failed to save data";
+        }
+
+        return json_encode($response);
+    }
+
+    public function getProfile($id){
+        $response = array();
+
+        $query = Pengguna::select('pengguna.nama', 'pengguna.email', 
+        'pengguna.password', 'pengguna.angkatan', 'pengguna.sharing',
+        'pengguna.tglRegister', 'ps.ps')
+        ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
+        ->selectRaw('GROUP_CONCAT(DISTINCT keahlian.keahlian SEPARATOR ", ") as keahlian')
+        ->leftJoin('ps', 'ps.id', '=', 'pengguna.idPS')
+        ->leftJoin('kemampuan', 'kemampuan.idUser', '=', 'pengguna.id')
+        ->leftJoin('bidang', 'bidang.id', '=', 'kemampuan.idBidang')
+        ->leftJoin('berkeahlian', 'berkeahlian.idUser', '=', 'pengguna.id')
+        ->leftJoin('keahlian', 'keahlian.id', '=', 'berkeahlian.idKeahlian')
+        ->groupBy('pengguna.id')
+        ->where('pengguna.id', $id);
+
+        if($query->count() > 0){
+            foreach($query->get() as $item){
+                $response['error'] = FALSE;
+                $response['message'] = 'Data Profile';
+                $response['pengguna']['nama'] = $item->nama . ' #' . $item->angkatan;
+                $response['pengguna']['tglRegister'] = $item->tglRegister;
+                $response['pengguna']['email'] = $item->email;
+                $response['pengguna']['password'] = $item->password;
+                $response['pengguna']['sharing'] = $item->sharing;
+                $response['pengguna']['ps'] = $item->ps;
+                $response['pengguna']['bidang'] = $item->bidang;
+                $response['pengguna']['keahlian'] = $item->keahlian;
+            }
+        }else{
+                $response['error'] = TRUE;
+                $response['message'] = 'Data Not Found';
+        }
+
+        return json_encode($response);
+    }
+
+    public function getAllAdmin(){
+        $response = array();
+        $data = array();
+
+        $query = Pengguna::where('level', '2');
+
+        if($query->count() > 0){
+            foreach($query->get() as $item){
+                array_push($data, array(
+                    'id' => $item->id,
+                    'nama' => $item->nama,
+                    'email' => $item->email,
+                    'password' => $item->password,
+                    'angkatan' => $item->angkatan,
+                    'sharing' => $item->sharing,
+                    'level' => $item->level,
+                    'idPS' => $item->idPS,
+                    'tglRegister' => $item->tglRegister
+                ));
+            }
+
+            $response['error'] = FALSE;
+            $response['message'] = "All Admin";
+            $response['data'] = $data;
+        }else{
+            $response['error'] = TRUE;
+            $response['message'] = "Admin not found";
         }
 
         return json_encode($response);
