@@ -11,6 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
 });
+
+Route::get('/pj/dashboard', 'DashboardController@index');
+Route::get('/tempat', 'TempatController@indexDaftar');
+Route::get('/detail-tempat', 'TempatController@indexDetail');
+Route::get('/tambah-tempat', 'TempatController@indexTambah');
+
+Route::get(['prefix' => '/'])->middleware('status');
