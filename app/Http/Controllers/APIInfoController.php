@@ -55,7 +55,8 @@ class APIInfoController extends Controller
         $response = array();
 
         $query = Info::select('info.id', 'info.durasi', 'info.project',
-        'info.keterangan', 'info.tglPublish', 'pengguna.nama as pembagi')
+        'info.keterangan', 'info.tglPublish', 'info.idUser as idPembagi', 
+        'pengguna.nama as pembagi')
         ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
         ->selectRaw('GROUP_CONCAT(DISTINCT keahlian.keahlian SEPARATOR ", ") as keahlian')
         ->leftJoin('pengguna', 'pengguna.id', '=', 'info.idUser')
@@ -74,6 +75,7 @@ class APIInfoController extends Controller
                 $response['detail']['project'] = $item->project;
                 $response['detail']['keterangan'] = $item->keterangan;
                 $response['detail']['tglPublish'] = $item->tglPublish;
+                $response['detail']['idPembagi'] = $item->idPembagi;
                 $response['detail']['pembagi'] = $item->pembagi;
                 $response['detail']['bidang'] = $item->bidang;
                 $response['detail']['keahlian'] = $item->keahlian;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Pengguna;
 use App\Kemampuan;
 use App\Berkeahlian;
@@ -15,10 +16,10 @@ class APIPenggunaController extends Controller
         $id = app(IDGeneratorController::class)->generatePengguna();
         $nama = $request->input('nama');
         $email = $request->input('email');
-        $password = $request->input('password');
+        $password = bcrypt($request->input('password'));
         $angkatan = $request->input('angkatan');
         $sharing = $request->input('sharing');
-        $level = 1;
+        $level = 0;
         $idPS = "PS000001";
         date_default_timezone_set("asia/jakarta");
         $tglRegister = time();
@@ -55,23 +56,20 @@ class APIPenggunaController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
-        $query = Pengguna::select()
-        ->where('email', '=' , $email)
-        ->where('password', '=' , $password);
+        $pengguna = array('email' => $email, 'password' => $password);
 
-        if($query->count() > 0 ){
-            foreach($query->get() as $item){
-                $kemampuan= Kemampuan::select()->where('idUser', '=', $item->id)->count();
-                $berkeahlian= Berkeahlian::select()->where('idUser', '=', $item->id)->count();
-                $response['error'] = FALSE;
-                $response['message'] = "login successfull";
-                $response['pengguna'] = $item;
-                if($kemampuan > 0 && $berkeahlian > 0){
-                    $response['pengguna']['complete'] = TRUE;
-                }else{
-                    $response['pengguna']['complete'] = FALSE;
-                }
+        if(Auth::attempt($pengguna)){
+            $kemampuan= Kemampuan::select()->where('idUser', '=', Auth::id())->count();
+            $berkeahlian= Berkeahlian::select()->where('idUser', '=', Auth::id())->count();
+            $response['error'] = FALSE;
+            $response['message'] = "login successfull";
+            $response['pengguna'] = Auth::user();
+            if($kemampuan > 0 && $berkeahlian > 0){
+                $response['pengguna']['complete'] = TRUE;
+            }else{
+                $response['pengguna']['complete'] = FALSE;
             }
+
         }else{
             $response['error'] = TRUE;
             $response['message'] = "login failure";
@@ -81,51 +79,81 @@ class APIPenggunaController extends Controller
     }
 
     public function complete(Request $request){
-        
         $response = array();
-        $idBidang = array();
         $fieldBidang = array();
         $fieldKeahlian = array();
         $id = $request->input('id');
+        $angkatan = $request->input('angkatan');
         $idPS = $request->input('idPS');
         $bidang = json_decode(json_encode($request->input('bidang')), true);
         $keahlian = json_decode(json_encode($request->input('keahlian')), true);
-        
-        foreach($bidang as $iBidang){
-            array_push($fieldBidang, [
-                'idUser' => $id,
-                'idBidang' => $iBidang
-            ]);
+
+        $fieldPengguna = array('angkatan' => $angkatan, 'idPS' => $idPS);
+        $queryPengguna = Pengguna::where('id', $id)->update($fieldPengguna);
+
+        if($bidang !=null){
+
+            foreach($bidang as $iBidang){
+                array_push($fieldBidang, [
+                    'idUser' => $id,
+                    'idBidang' => $iBidang
+                ]);
+            }
+
+            $cekBidang = Kemampuan::where('idUser', $id);
+
+            if($cekBidang->count() > 0){
+                $queryDelBidang = $cekBidang->delete();
+                if($queryDelBidang){
+                    $queryBidang = Kemampuan::insert($fieldBidang);
+                }
+            }else{
+                $queryBidang = Kemampuan::insert($fieldBidang);
+            }
+
+        }else{
+            $queryBidang = true;
         }
 
-        foreach($keahlian as $iKeahlian){
-            array_push($fieldKeahlian,[
-                'idUser' => $id, 
-                'idKeahlian' => $iKeahlian
-            ]);
+        if($keahlian !=null){
+
+            foreach($keahlian as $iKeahlian){
+                array_push($fieldKeahlian,[
+                    'idUser' => $id, 
+                    'idKeahlian' => $iKeahlian
+                ]);
+            }
+
+            $cekKeahlian = Berkeahlian::where('idUser', $id);
+
+            if($cekKeahlian->count() > 0){
+                $queryDelKeahlian = $cekKeahlian->delete();
+                if($queryDelKeahlian){
+                    $queryBerkeahlian = Berkeahlian::insert($fieldKeahlian);
+                }
+            }else{
+                $queryBerkeahlian = Berkeahlian::insert($fieldKeahlian);
+            }
+
+        }else{
+            $queryBerkeahlian = true;
         }
-
-        $fieldPengguna = array('idPS' => $idPS);
         
-        $queryPengguna = Pengguna::where('id', '=', $id)->update($fieldPengguna);
-        $queryBidang = Kemampuan::insert($fieldBidang);
-        $queryBerkeahlian = Berkeahlian::insert($fieldKeahlian);
-
-        if($queryPengguna && $queryBidang && $queryBerkeahlian){
+        if($queryBidang && $queryBerkeahlian){
             $response['error'] = FALSE;
             $response['message'] = "Data saved successfully";
         }else{
             $response['error'] = TRUE;
             $response['message'] = "Failed to save data";
         }
-
+        
         return json_encode($response);
     }
 
     public function getProfile($id){
         $response = array();
 
-        $query = Pengguna::select('pengguna.nama', 'pengguna.email', 
+        $query = Pengguna::select('pengguna.nama', 'pengguna.foto', 'pengguna.email', 
         'pengguna.password', 'pengguna.angkatan', 'pengguna.sharing',
         'pengguna.tglRegister', 'ps.ps')
         ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
@@ -142,10 +170,12 @@ class APIPenggunaController extends Controller
             foreach($query->get() as $item){
                 $response['error'] = FALSE;
                 $response['message'] = 'Data Profile';
-                $response['pengguna']['nama'] = $item->nama . ' #' . $item->angkatan;
+                $response['pengguna']['nama'] = $item->nama;
+                $response['pengguna']['angkatan'] = $item->angkatan;
+                $response['pengguna']['foto'] = url('/img/pengguna') . '/' . $item->foto;
                 $response['pengguna']['tglRegister'] = $item->tglRegister;
                 $response['pengguna']['email'] = $item->email;
-                $response['pengguna']['password'] = $item->password;
+                $response['pengguna']['password'] = '*****';
                 $response['pengguna']['sharing'] = $item->sharing;
                 $response['pengguna']['ps'] = $item->ps;
                 $response['pengguna']['bidang'] = $item->bidang;
@@ -163,7 +193,7 @@ class APIPenggunaController extends Controller
         $response = array();
         $data = array();
 
-        $query = Pengguna::where('level', '2');
+        $query = Pengguna::where('level', '1');
 
         if($query->count() > 0){
             foreach($query->get() as $item){
@@ -189,6 +219,65 @@ class APIPenggunaController extends Controller
         }
 
         return json_encode($response);
+    }
+
+    public function editFoto(Request $request){
+        $response = array();
+
+        $id = $request->input('id');
+
+        $foto = $request->file('foto');
+
+        $destinationFoto = public_path('') . '/img/pengguna/';
+
+        $fotoName = $id .'.jpg';
+        $foto->move($destinationFoto, $fotoName);
+
+        $queryCek = Pengguna::select('foto')->where('id', $id)->get();
+
+        if($queryCek[0]->foto == ""){
+
+            $query = Pengguna::where('id', $id)->update(['foto' => $fotoName]);
+
+            if($query){
+                $response['error'] = FALSE;
+                $response['message'] = "Foto updated successfully";
+            }else{
+                $response['error'] = TRUE;
+                $response['message'] = "Failed to update foto";
+            }
+    
+        }else{
+            $response['error'] = FALSE;
+            $response['message'] = "Foto updated successfully";
+        }
+
+        
+        return json_encode($response);
+
+    }
+
+    public function editDataProfile(Request $request){
+        $response = array();
+
+        $id = $request->input('id');
+        $nama = $request->input('nama');
+        $sharing =  $request->input('sharing');
+
+        $fieldQuery = array('nama' => $nama, 'sharing' => $sharing);
+
+        $query = Pengguna::where('id', $id)->update($fieldQuery);
+
+        if($query){
+            $response['error'] = FALSE;
+            $response['message'] = "Profile updated successfully";
+        }else{
+            $response['error'] = TRUE;
+            $response['message'] = "Failed to update profile";
+        }
+
+        return json_encode($response);
+
     }
     
     public function tidakdipakai(Request $request){

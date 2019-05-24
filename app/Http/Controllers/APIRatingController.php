@@ -53,8 +53,9 @@ class APIRatingController extends Controller
         $response = array();
 
         $query = Rating::select('rating.id', 'rating.rating', 
-        'rating.project', 'rating.tglPublish', 'pengguna.nama as penilai', 
-        'tempat.id as idTempat', 'tempat.nama as namaTempat', 'tipe.tipe')
+        'rating.project', 'rating.tglPublish', 'rating.idUser as idPenilai', 
+        'pengguna.nama as penilai', 'tempat.id as idTempat', 
+        'tempat.nama as namaTempat', 'tipe.tipe')
         ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
         ->selectRaw('GROUP_CONCAT(DISTINCT keahlian.keahlian SEPARATOR ", ") as keahlian')
         ->leftJoin('pengguna', 'pengguna.id', '=', 'rating.idUser')
@@ -74,6 +75,7 @@ class APIRatingController extends Controller
                 $response['detail']['rating'] = $item->rating;
                 $response['detail']['project'] = $item->project;
                 $response['detail']['tglPublish'] = $item->tglPublish;
+                $response['detail']['idPenilai'] = $item->idPenilai;
                 $response['detail']['penilai'] = $item->penilai;
                 $response['detail']['bidang'] = $item->bidang;
                 $response['detail']['keahlian'] = $item->keahlian;

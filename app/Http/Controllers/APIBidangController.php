@@ -7,6 +7,8 @@ use App\Bidang;
 use App\RatingBidang;
 use App\InfoBidang;
 use App\TempatBidang;
+use App\Kemampuan;
+use App\Berkeahlian;
 
 class APIBidangController extends Controller
 {
@@ -139,6 +141,42 @@ class APIBidangController extends Controller
         }
 
         if($queryBidang && $queryTempat){
+            $response['error'] = FALSE;
+            $response['message'] = "All Data";
+            $response['data'] = $data;
+        }else{
+            $response['error'] = TRUE;
+            $response['message'] = "Data Not Found";
+        }
+        
+        return json_encode($response);
+    }
+
+    public function getPenggunaBidang($idUser){
+        $response = array();
+        $data = array();
+
+        $queryBidang = Bidang::get();
+
+        $queryPengguna = Kemampuan::where('idUser', $idUser)->get();
+
+        foreach($queryBidang as $iBidang){
+            $id = $iBidang->id;
+            $selected = FALSE;
+            foreach($queryPengguna as $iPengguna){
+                $idBidang = $iPengguna->idBidang;
+                if($id === $idBidang){
+                    $selected = TRUE;
+                }
+            }
+            array_push($data, array(
+                'id' => $id,
+                'bidang' => $iBidang->bidang,
+                'selected' => $selected
+            ));
+        }
+
+        if($queryBidang && $queryPengguna){
             $response['error'] = FALSE;
             $response['message'] = "All Data";
             $response['data'] = $data;

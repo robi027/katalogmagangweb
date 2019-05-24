@@ -5,6 +5,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title')</title>
 
@@ -25,17 +26,22 @@
     {{-- Select2 --}}
     <script src="{{asset('js/plugins/select2/select2.full.min.js') }}"></script>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+    {{-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
     integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-    crossorigin=""/>
+    crossorigin=""/> --}}
+
+    <link rel="stylesheet" href="{{asset('css/plugins/leaflet/leaflet.css')}}"/>
 
     <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+    {{-- <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
     integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
-    crossorigin=""></script>
+    crossorigin=""></script> --}}
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script> 
+    <script src="{{asset('js/plugins/leaflet/leaflet.js')}}"></script>
+
+    {{-- <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" /> --}}
+    <link rel="stylesheet" href="{{asset('css/plugins/leaflet/Control.Geocoder.css')}}" />
+    <script src="{{asset('js/plugins/leaflet/Control.Geocoder.js')}}"></script> 
 
     <link href="{{asset('css/custom.css') }}" rel="stylesheet">
 
@@ -60,7 +66,7 @@
                 </div>
                 <ul class="nav navbar-top-links navbar-right">
                     <li>
-                        <a href="#">
+                        <a href="{{route('logout')}}">
                             <i class="fa fa-sign-out"></i> Log out
                         </a>
                     </li>
@@ -91,13 +97,15 @@
 <script src="{{asset('js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
 <script src="{{asset('js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
 
-
 <!-- Custom and plugin javascript -->
 <script src="{{asset('js/inspinia.js') }}"></script>
 <script src="{{asset('js/plugins/pace/pace.min.js') }}"></script>
 
 {{-- Data Tables JS --}}
 <script src="{{asset('js/plugins/dataTables/datatables.min.js') }}"></script>
+
+{{-- ChartJS --}}
+<script src="{{asset('js/plugins/chartJs/Chart.min.js') }}"></script>
 
 </body>
 

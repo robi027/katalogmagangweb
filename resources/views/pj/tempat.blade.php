@@ -17,39 +17,35 @@
                     </div>
                     <div class="ibox-content">
                         <div class="tabldataTables-examplee-responsive">
-                            <table class="table table-striped table-bordered table-hover dataTables-example" >
+                            <table class="table table-striped table-bordered table-hover daftarTempat" >
                                 <thead>
-                                <tr>
-                                    <th>Foto</th>
-                                    <th>Nama</th>
-                                    <th>Tipe</th>
-                                    <th>Alamat</th>
-                                    <th>Bidang</th>
-                                    <th>Pembagi</th>
-                                </tr>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Foto</th>
+                                        <th>Nama</th>
+                                        <th>Tipe</th>
+                                        <th>Alamat</th>
+                                        <th>Bidang</th>
+                                        <th>Pembagi</th>
+                                        <th>Publish</th>
+                                        <th>Action</th>
+                                    </tr>
                                 </thead>
-                                <tbody>
-                                <tr class="gradeX">
-                                    <td><img class="img-tempat-tabel" src="https://www.google.co.id/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/></td>
-                                    <td>Internet
-                                        Explorer 4.0
-                                    </td>
-                                    <td>Win 95+</td>
-                                    <td class="center">4</td>
-                                    <td class="center">X</td>
-                                    <td class="center">X</td>
-                                </tr>
-                                </tbody>
                                 <tfoot>
-                                <tr>
-                                    <th>Foto</th>
-                                    <th>Nama</th>
-                                    <th>Tipe</th>
-                                    <th>Alamat</th>
-                                    <th>Bidang</th>
-                                    <th>Pembagi</th>
-                                </tr>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Foto</th>
+                                        <th>Nama</th>
+                                        <th>Tipe</th>
+                                        <th>Alamat</th>
+                                        <th>Bidang</th>
+                                        <th>Pembagi</th>
+                                        <th>Publish</th>
+                                        <th>Action</th>
+                                    </tr>
                                 </tfoot>
+                                <tbody>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -59,9 +55,37 @@
     </div>
 
     <script>
+        var header = {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')};
+
         $(document).ready(function(){
-            $('.dataTables-example').DataTable({
+            $('.daftarTempat').DataTable({
                 responsive: true,
+                processing: true,
+                serverSide: true,
+                order: [[ 7, 'desc']],
+                bDestroy : true,
+                bAutoWidth : false,
+                ajax: {
+                    'headers' : header,
+                    'type' : 'POST',
+                    'dataType' : 'json',
+                    'url' : '/tempat'
+                },
+                columns : [
+                    {'data': 'id'},
+                    {'data': 'foto'},
+                    {'data': 'nama'},
+                    {'data': 'tipe'},
+                    {'data': 'alamat'},
+                    {'data': 'bidang'},
+                    {'data': 'pembagi'},
+                    {'data': 'tglPublish'},
+                    {'data': 'action'}
+                ],
+                columnDefs: [{
+                    'targets': [0, 7],
+                    'visible': false
+                }],
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [
                     { extend: 'copy'},
@@ -83,8 +107,8 @@
             });
         });
 
-        $('.dataTables-example tbody').on('click', function(){
-            window.location = '{{URL::asset('/detail-tempat')}}';
+        $(document).on('click', '.bDetailTempat', function(){
+            $(window.location).attr('href', '/detail-tempat/' + this.id);
         });
     </script>
 @endsection

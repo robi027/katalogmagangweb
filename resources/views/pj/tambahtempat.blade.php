@@ -15,7 +15,7 @@
                         <h5>Data Tempat</h5>
                     </div>
                     <div class="ibox-content">
-                        <form method="GET" class="form-horizontal">
+                        <form role="form" class="form-horizontal">
                             <div class="row">
                                 <div class="col-sm-3">
                                     <h2>Foto</h2>
@@ -33,60 +33,44 @@
                                 <div class="col-sm-5">
                                     <div class="form-group"><label class="col-sm-2 control-label">Tipe</label>
                                         <div class="col-sm-10">
-                                            <select class="form-control" name="account">
-                                                <option>PT</option>
-                                                <option>CV</option>
+                                            <select class="form-control tipe" name="tipe">
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Nama</label>
                                         <div class="col-sm-10">
-                                            <input type="text" placeholder="Nama" name="nama" class="form-control">
+                                            <input type="text" id="nama" placeholder="Nama" name="nama" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Deskripsi</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control textarea-custom" rows="3" id="comment" placeholder="Deskripsi"></textarea>
+                                            <textarea class="form-control textarea-custom" rows="3" id="deskripsi" placeholder="Deskripsi"></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Email</label>
                                         <div class="col-sm-10">
-                                            <input type="email" placeholder="Email" class="form-control">
+                                            <input type="email" id="email" placeholder="Email" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Telepon</label>
                                         <div class="col-sm-10">
-                                            <input type="number" placeholder="No Telepon" class="form-control">
+                                            <input type="number" id="no" placeholder="No Telepon" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Website</label>
                                         <div class="col-sm-10">
-                                            <input type="text" placeholder="Website" class="form-control">
+                                            <input type="text" id="website" placeholder="Website" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Bidang</label>
                                         <div class="col-sm-10">
                                             <select class="select2_bidang form-control" multiple="multiple">
-                                                <option value="Mayotte">Mayotte</option>
-                                                <option value="Mexico">Mexico</option>
-                                                <option value="Micronesia, Federated States of">Micronesia, Federated States of</option>
-                                                <option value="Moldova, Republic of">Moldova, Republic of</option>
-                                                <option value="Monaco">Monaco</option>
-                                                <option value="Mongolia">Mongolia</option>
-                                                <option value="Montenegro">Montenegro</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Keahlian</label>
                                         <div class="col-sm-10">
                                             <select class="select2_keahlian form-control" multiple="multiple">
-                                                <option value="Mayotte">Mayotte</option>
-                                                <option value="Mexico">Mexico</option>
-                                                <option value="Micronesia, Federated States of">Micronesia, Federated States of</option>
-                                                <option value="Moldova, Republic of">Moldova, Republic of</option>
-                                                <option value="Monaco">Monaco</option>
-                                                <option value="Mongolia">Mongolia</option>
-                                                <option value="Montenegro">Montenegro</option>
                                             </select>
                                         </div>
                                     </div>
@@ -101,7 +85,7 @@
                                         <textarea class="form-control textarea-custom" rows="3" id="alamat" placeholder="Alamat"></textarea>
                                     </div>
                                     <div class="form-group col-sm-12">
-                                        <button class="btn btn-block btn-primary" type="submit">Publish</button>
+                                        <button class="btn btn-block btn-primary" type="button" id="bPublish">Publish</button>
                                     </div>
                                 </div>
                             </div>
@@ -113,11 +97,12 @@
     </div>
 
     <script type="text/javascript">
-        
+        var header = {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')};
         var mymap = L.map('mapid');
         var lg = new L.LayerGroup().addTo(mymap);
         var lat = -7.9422017;
         var lng = 112.609622;
+        var idUser = '{{$idLogin}}';
         var marker;
         var geocoder = L.Control.Geocoder.nominatim();
 
@@ -131,7 +116,6 @@
 
         var onDrag = function(e){
             var latlng = marker.getLatLng();
-
             geocoder.reverse(latlng, mymap.options.crs.scale(mymap.getZoom()), function(e){
                 console.log(e);
                 $('#alamat').val(e[0].name);
@@ -166,6 +150,61 @@
             document.getElementById("image-preview").src = oFREvent.target.result;
             };
         };
+        
+        $(document).ready(function(){
+            '@foreach($bidang as $iBidang)'
+                var option = new Option('{{$iBidang->bidang}}', '{{$iBidang->idBidang}}', false, false);
+                $('.select2_bidang').append(option).trigger('change');
+            '@endforeach'
+
+            '@foreach($keahlian as $iKeahlian)'
+                var option = new Option('{{$iKeahlian->keahlian}}', '{{$iKeahlian->idKeahlian}}', false, false);
+                $('.select2_keahlian').append(option).trigger('change');
+            '@endforeach'
+
+            '@foreach($tipe as $iTipe)'
+                var option = new Option('{{$iTipe->tipe}}', '{{$iTipe->idTipe}}', false, false);
+                $('.tipe').append(option).trigger('change'); 
+            '@endforeach'
+        });
+
+        $('#bPublish').on('click', function(){
+            var bidang = $('.select2_bidang').val();
+            var keahlian = $('.select2_keahlian').val();
+
+            var formData = new FormData();
+            formData.append('idTipe', $('.tipe').val());
+            formData.append('idUser', idUser);
+            formData.append('nama', $('#nama').val());
+            formData.append('foto', $('input[type=file]')[0].files[0]);
+            $.each(bidang, function(i, item){
+                formData.append('bidang[]', bidang[i]);
+            });
+            $.each(keahlian, function(i, item){
+                formData.append('keahlian[]', keahlian[i]);
+            });
+            formData.append('deskripsi', $('#deskripsi').val());
+            formData.append('no', $('#no').val());
+            formData.append('email', $('#email').val());
+            formData.append('website', $('#website').val());
+            formData.append('lat', lat);
+            formData.append('lng', lng);
+            formData.append('alamat', $('#alamat').val());
+
+            $.ajax({
+                headers : header,
+                type : 'POST',
+                dataType : 'json',
+                contentType : false,
+                processData : false,
+                url : '/api/tempat',
+                data : formData,
+                success:function(data){
+                    console.log(data);
+                }
+            });
+        });
+
     </script>
 @endsection
         

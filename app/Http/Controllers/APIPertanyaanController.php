@@ -193,6 +193,6 @@ class APIPertanyaanController extends Controller
         return json_encode($response);
     }
 
-    public function updatePertanyaan(Requesr $request){
+    public function updatePertanyaan(Request $request){
     }
 }

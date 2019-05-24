@@ -7,6 +7,7 @@ use App\Keahlian;
 use App\RatingKeahlian;
 use App\InfoKeahlian;
 use App\TempatKeahlian;
+use App\Berkeahlian;
 
 class APIKeahlianController extends Controller
 {
@@ -139,6 +140,47 @@ class APIKeahlianController extends Controller
         }
 
         if($queryKeahlian && $queryTempat){
+
+            $response['error'] = FALSE;
+            $response['message'] = "All Data";
+            $response['data'] = $data;
+
+        }else{
+
+            $response['error'] = TRUE;
+            $response['message'] = "Data Not Found";
+
+        }
+
+        return json_encode($response);
+    }
+
+    public function getPenggunaKeahlian($idUser){
+
+        $response = array();
+        $data = array();
+
+        $queryKeahlian = Keahlian::get();
+
+        $queryPengguna = Berkeahlian::where('idUser', $idUser)->get();
+
+        foreach($queryKeahlian as $iKeahlian){
+            $id = $iKeahlian->id;
+            $selected = FALSE;
+            foreach($queryPengguna as $iPengguna){
+                $idKeahlian = $iPengguna->idKeahlian;
+                if($id === $idKeahlian){
+                    $selected = TRUE;
+                }
+            }
+            array_push($data, array(
+                'id' => $id,
+                'keahlian' => $iKeahlian->keahlian,
+                'selected' => $selected
+            ));
+        }
+
+        if($queryKeahlian && $queryPengguna){
 
             $response['error'] = FALSE;
             $response['message'] = "All Data";

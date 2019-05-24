@@ -21,31 +21,45 @@ class IDGeneratorController extends Controller
     }
 
     public function generateInfo(){
-        $tempat = "IF";
+        $info = "IF";
         $charid = strtoupper(md5(uniqid(rand(), true)));
-        $uuid = $tempat . substr($charid, 0, 6);
+        $uuid = $info . substr($charid, 0, 6);
         return $uuid;
     }
 
     public function generateRating(){
-        $tempat = "RT";
+        $rating = "RT";
         $charid = strtoupper(md5(uniqid(rand(), true)));
-        $uuid = $tempat . substr($charid, 0, 6);
+        $uuid = $rating . substr($charid, 0, 6);
         return $uuid;
     }
 
     public function generateChat(){
-        $tempat = "CH";
+        $chat = "CH";
         $charid = strtoupper(md5(uniqid(rand(), true)));
-        $uuid = $tempat . substr($charid, 0, 6);
+        $uuid = $chat . substr($charid, 0, 6);
         return $uuid;
         
     }
 
     public function generatePertanyaan(){
-        $tempat = "PT";
+        $pertanyaan = "PT";
         $charid = strtoupper(md5(uniqid(rand(), true)));
-        $uuid = $tempat . substr($charid, 0, 6);
+        $uuid = $pertanyaan . substr($charid, 0, 6);
+        return $uuid;
+    }
+
+    public function generateBidang(){
+        $bidang = "BD";
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $uuid = $bidang . substr($charid, 0, 6);
+        return $uuid;
+    }
+
+    public function generateKeahlian(){
+        $keahlian = "KA";
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $uuid = $keahlian . substr($charid, 0, 6);
         return $uuid;
     }
 }

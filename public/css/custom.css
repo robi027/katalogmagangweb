@@ -1,7 +1,6 @@
 .img-tempat-tabel {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
+    width: 100%;
+    height: auto;
 }
 
 .img-pengguna-tabel {
@@ -40,4 +39,23 @@ span.select2-container {
 .select2-container {
     width: 100% !important;
     padding: 0;
+}
+
+.mediatext-custom {
+    font-size: 15px;
+}
+
+.scroll-item{
+    height: 400px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.iboxfooter-custom{
+    background-color: white;
+}
+
+.chartTtlPengguna {
+    height: 50px;
+    width: 50px;
 }

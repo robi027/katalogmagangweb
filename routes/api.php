@@ -18,16 +18,20 @@ Route::put('register', 'APIPenggunaController@complete');
 Route::post('login', 'APIPenggunaController@login');
 Route::get('profile/{id}', 'APIPenggunaController@getProfile');
 Route::get('admin', 'APIPenggunaController@getAllAdmin');
+Route::put('foto', 'APIPenggunaController@editFoto');
+Route::put('dataprofile', 'APIPenggunaController@editDataProfile');
 
 Route::get('bidang', 'APIBidangController@getAllBidang');
 Route::get('bidang/rating/{idRating}', 'APIBidangController@getRatingBidang');
 Route::get('bidang/info/{idInfo}', 'APIBidangController@getInfoBidang');
 Route::get('bidang/tempat/{idTempat}', 'APIBidangController@getTempatBidang');
+Route::get('bidang/pengguna/{idUser}', 'APIBidangController@getPenggunaBidang');
 
 Route::get('keahlian', 'APIKeahlianController@getAllKeahlian');
 Route::get('keahlian/rating/{idRating}', 'APIKeahlianController@getRatingKeahlian');
 Route::get('keahlian/info/{idInfo}', 'APIKeahlianController@getInfoKeahlian');
 Route::get('keahlian/tempat/{idTempat}', 'APIKeahlianController@getTempatKeahlian');
+Route::get('keahlian/pengguna/{idUser}', 'APIKeahlianController@getPenggunaKeahlian');
 
 Route::get('ps', 'APIPSController@getAllPS');
 

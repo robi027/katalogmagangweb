@@ -34,7 +34,7 @@ class APITempatController extends Controller
                     'id' => $item->id,
                     'tipe' => $item->tipe,
                     'nama' => $item->nama,
-                    'foto' => "http://192.168.1.80:8000/img/tempat/" . $item->foto,
+                    'foto' => url('/img/tempat') . '/' . $item->foto,
                     'alamat' => $item->alamat,
                     'bidang' => $item->bidang,
                     'rating' => $item->rating,
@@ -252,7 +252,7 @@ class APITempatController extends Controller
                     'id' => $item->id,
                     'tipe' => $item->tipe,
                     'nama' => $item->nama,
-                    'foto' => "http://192.168.1.80:8000/img/tempat/" . $item->foto,
+                    'foto' => url('/img/tempat') . '/' . $item->foto,
                     'alamat' => $item->alamat,
                     'bidang' => $item->bidang,
                     'rating' => $item->rating,
@@ -307,7 +307,7 @@ class APITempatController extends Controller
                     'id' => $item->id,
                     'tipe' => $item->tipe,
                     'nama' => $item->nama,
-                    'foto' => "http://127.0.0.1:8000/img/tempat/" . $item->foto,
+                    'foto' => url('/img/tempat') . '/' . $item->foto,
                     'alamat' => $item->alamat,
                     'bidang' => $item->bidang,
                     'rating' => $item->rating,
@@ -334,7 +334,7 @@ class APITempatController extends Controller
         'tempat.foto', 'tempat.no', 'tempat.email', 'tempat.website',
         'tempat.deskripsi', 'tempat.lat', 'tempat.lng', 'tempat.alamat', 
         'tempat.status', 'tempat.tglPublish', 'tempat.tglUpdate', 
-        'pengguna.nama as pembagi')
+        'tempat.idUser as idPembagi', 'pengguna.nama as pembagi')
         ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
         ->selectRaw('GROUP_CONCAT(DISTINCT keahlian.keahlian SEPARATOR ", ") as keahlian')
         ->selectRaw('IFNULL(SUM(rating.rating), 0) as rating')
@@ -366,7 +366,7 @@ class APITempatController extends Controller
                 $response['data']['id'] = $iTempat->id;
                 $response['data']['tipe'] = $iTempat->tipe;
                 $response['data']['nama'] = $iTempat->nama;
-                $response['data']['foto'] = "http://192.168.1.80:8000/img/tempat/" . $iTempat->foto;
+                $response['data']['foto'] = url('/img/tempat') . '/' . $iTempat->foto;
                 $response['data']['no'] = $iTempat->no;
                 $response['data']['email'] = $iTempat->email;
                 $response['data']['website'] = $iTempat->website;
@@ -375,6 +375,7 @@ class APITempatController extends Controller
                 $response['data']['lng'] = $iTempat->lng;
                 $response['data']['alamat'] = $iTempat->alamat;
                 $response['data']['status'] = $iTempat->status;
+                $response['data']['idPembagi'] = $iTempat->idPembagi;
                 $response['data']['pembagi'] = $iTempat->pembagi;
                 $response['data']['tglPublish'] = $iTempat->tglPublish;
                 $response['data']['tglUpdate'] = $iTempat->tglUpdate;
@@ -417,7 +418,7 @@ class APITempatController extends Controller
                 $response['data']['id'] = $iTempat->id;
                 $response['data']['tipe'] = $iTempat->tipe;
                 $response['data']['nama'] = $iTempat->nama;
-                $response['data']['foto'] = "http://192.168.1.80:8000/img/tempat/" . $iTempat->foto;
+                $response['data']['foto'] = url('/img/tempat') . '/' . $iTempat->foto;
                 $response['data']['no'] = $iTempat->no;
                 $response['data']['email'] = $iTempat->email;
                 $response['data']['website'] = $iTempat->website;
@@ -463,7 +464,7 @@ class APITempatController extends Controller
                         'id' => $item->id,
                         'tipe' => $item->tipe,
                         'nama' => $item->nama,
-                        'foto' => "http://192.168.1.80:8000/img/tempat/" . $item->foto,
+                        'foto' => url('/img/tempat') . '/' . $item->foto,
                         'alamat' => $item->alamat,
                         'bidang' => $item->bidang,
                         'rating' => $item->rating,

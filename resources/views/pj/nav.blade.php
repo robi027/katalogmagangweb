@@ -4,12 +4,12 @@
             <ul class="nav metismenu" id="side-menu">
                 <li class="nav-header">
                     <div class="dropdown profile-element">
-                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">David Williams</strong>
-                             </span> <span class="text-muted text-xs block">Art Director <b class="caret"></b></span> </span> </a>
-                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a href="#">Logout</a></li>
-                            </ul>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{ $login }}</strong>
+                            </span> <span class="text-muted text-xs block">FILKOM<b class="caret"></b></span> </span> </a>
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            <li><a href="{{route('logout')}}">Logout</a></li>
+                        </ul>
                     </div>
                     <div class="logo-element">
                         KM
@@ -22,8 +22,13 @@
                 request()->is('detail-tempat')? 'active' : '' }}">
                     <a href="{{ url('tempat') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Katalog Tempat</span></a>
                 </li>
+                <li class="{{ request()->is('keahlian') ? 'active' : '' }}">
+                    <a href="{{ url('keahlian') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Keahlian</span></a>
+                </li>
+                <li class="{{ request()->is('bidang') ? 'active' : '' }}">
+                    <a href="{{ url('bidang') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Bidang</span></a>
+                </li>
             </ul>
-
         </div>
     </nav>
 @endsection
