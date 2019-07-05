@@ -24,10 +24,13 @@
                             </div>
                             <div class="col-md-8">
                                 <h2 class="font-bold m-b-xs">
-                                    {{ $nama . ' ('.$tipe.')' }}  <span class="label lStatus">Loading...</span>
+                                    {{ $nama . ' ('.$tipe.')' }} 
+                                    @if($kerjasama === 2)
+                                        <img class="img-verified" src="{{url('/img/verified.svg')}}">
+                                    @endif
                                 </h2>
                                 <small>
-                                    {{$bidang}}
+                                    {{$bidang}} <span class="label lStatus">Loading...</span>
                                 </small>
                                 <hr>
                                 <h4>Deskripsi</h4>
@@ -48,6 +51,23 @@
                                     <br>
                                     <div id='mapid' style='width: 100%; height: 150px;'></div>
                                 </dl>
+                                <hr>
+                                <dt>Kontributor</dt>
+                                <div class="tabldataTables-examplee-responsive">
+                                    <table class="table table-striped table-bordered table-hover daftarKontributor" id="tbKontributor" >
+                                        <thead>
+                                        <tr>
+                                            <th>ID Tempat</th>
+                                            <th>ID Pengguna</th>
+                                            <th>Nama</th>
+                                            <th>Tanggal Join</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -134,12 +154,19 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="font-group"> Rekrut Sampai</label>
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" id="data_1" placeholder="27/08/2018">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label>Keterangan</label>
                             <textarea class="form-control textarea-custom" rows="2" id="tKetInfo" placeholder="Keterangan"></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
+                    <small id="validationAddInfo" class="pull-left">*Tidak Boleh Kosong</small>
                     <button class="btn btn-default" type="submit" data-dismiss="modal"><strong>Batal</strong></button>
                     <button class="btn btn btn-primary" id="bPublish" type="submit"><strong>Publish</strong></button>
                 </div>
@@ -177,6 +204,12 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="font-group"> Rekrut Sampai</label>
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" id="data_2" placeholder="27/08/2018">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label>Keterangan</label>
                             <textarea class="form-control textarea-custom" rows="2" id="dKetInfo" placeholder="Keterangan"></textarea>
                         </div>
@@ -187,6 +220,7 @@
                             </a>
                             <input type="text" id="dPenginfo" placeholder="Penginfo" class="form-control">
                         </div>
+                        <small id="validationEditInfo" class="pull-left">*Tidak Boleh Kosong</small>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -204,7 +238,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Detail Penilai</h4>
+                    <h4 class="modal-title">Detail Penilai <span style="display: none" id="idRating"></span></h4>
                 </div>
                 <div class="modal-body">
                     <form role="form">
@@ -246,7 +280,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-default" type="submit" data-dismiss="modal"><strong>Back</strong></button>
-                    <button class="btn btn-danger" id="bHide" type="submit"><strong>Hide</strong></button>
+                    <button class="btn btn-danger pull-left" onclick="deleteRating()" type="submit"><strong>Delete</strong></button>
                 </div>
             </div>
         </div>
@@ -287,6 +321,26 @@
         </div>
     </div>
 
+    {{-- Modal Detail Kontributor --}}
+    <div class="modal fade" id="mKontributor" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="tmKontributor">Kontributor</h4>
+                </div>
+                <div class="modal-body">
+                    <span id="smKontributor"></span>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger pull-left" type="submit" id="deleteKontribusi"><strong>Hapus</strong></button>
+                    <button class="btn btn-default" type="submit" data-dismiss="modal"><strong>Close</strong></button>
+                    <button class="btn btn-primary" type="submit" id="addKontribusi" style="display: none"><strong>Publish</strong></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="text/javascript">
         var header = {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')};
         var idTempat = '{{$id}}';
@@ -297,6 +351,8 @@
         var lng = {{$lng}};
         var tabelRating;
         var tabelInfo;
+        var tabelKontributor;
+        var curdate = new Date();
         
         $(document).ready(function(){
             if({{$status}} == 0){
@@ -306,7 +362,8 @@
             }
 
             getInfoTempat();
-            getRatingTempat();  
+            getRatingTempat(); 
+            getKontribusiTempat();
             
         });
 
@@ -377,13 +434,57 @@
             });
         };
 
+        function getKontribusiTempat(){
+            tabelKontributor = $('.daftarKontributor').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                order: [[ 3, 'desc']],
+                bDestroy : true,
+                bAutoWidth : false,
+                bLengthChange: false,
+                bFilter: false,
+                pageLength : 3,
+                ajax: {
+                    'headers' : header,
+                    'type' : 'POST',
+                    'dataType' : 'json',
+                    'url' : '/kontribusi/tempat',
+                    'data' : {idTempat: idTempat}
+                },
+                columns : [
+                    {'data': 'idTempat'},
+                    {'data': 'idUser'},
+                    {'data': 'namaPengguna',
+                        'render': function(data, type, row){
+                            return data.length > 35 ?
+                            data.substr(0, 35) + '...' :data;}
+                    },
+                    {'data': 'tglJoin'},
+                    {'data': 'level',
+                    'render' : function(data, type, row){
+                        var color = "primary";
+                        if(data == "Pengajuan"){
+                            color = "info";
+                        }
+                        return '<p><span id="' + data + '" class="badge badge-'+ color +' bKontributor">' + data + '</span></p>'
+                    }}
+                ],
+                columnDefs: [{
+                    'targets': [0, 1],
+                    'visible': false
+                }]
+            });
+           
+        }
+
         $('#tbPenilaian tbody').on('click', 'tr', function(){
             var id = tabelRating.row( this ).data().id;
             $.ajax({
                 headers : header,
                 type : 'GET',
                 dataType : 'json',
-                url : '/rating/' + id,
+                url : '/api/rating/' + id,
                 success:function(data){
                     $('#mDetailPenilai').modal("show");
                     document.getElementById('dPenilai').value = data.detail.penilai;
@@ -392,6 +493,7 @@
                     document.getElementById('dBidangRating').value = data.detail.bidang;
                     document.getElementById('dKeahlianRating').value = data.detail.keahlian;
                     document.getElementById('dKetRating').value = data.detail.keterangan;
+                    document.getElementById('idRating').innerHTML = data.detail.id;
                 }
             });
         });
@@ -409,6 +511,7 @@
                     document.getElementById('dDurasi').value = data.detail.durasi;
                     document.getElementById('dKetInfo').value = data.detail.keterangan;
                     document.getElementById('dPenginfo').value = data.detail.pembagi;
+                    $( "#data_2" ).datepicker( "setDate", data.detail.tglBerakhir);
                     var bidang = data.detail.bidang;
                     var keahlian = data.detail.keahlian;
                     
@@ -433,11 +536,79 @@
                         $('.dSelect2_bidang').val(null).trigger('change');
                         $('.dSelect2_keahlian').empty().trigger('change');
                         $('.dSelect2_keahlian').val(null).trigger('change');
+                        document.getElementById('validationEditInfo').style['display'] = 'none';
                     });
                 }
             });
 
         });
+
+        $('#tbKontributor tbody').on('click', 'tr', function(){
+            var idTempat = tabelKontributor.row(this).data().idTempat;
+            var idUser = tabelKontributor.row(this).data().idUser;
+            var namaPengguna = tabelKontributor.row(this).data().namaPengguna;
+            var level = tabelKontributor.row(this).data().level;
+            if(level == "Aktif"){
+                document.getElementById('smKontributor').innerHTML = "Apakah ingin menghapus <b>" +namaPengguna + "</b> sebagai Kontributor ?"
+            }else{
+                document.getElementById('smKontributor').innerHTML = "Apakah ingin menerima <b>" +namaPengguna + "</b> sebagai Kontributor ?"
+                document.getElementById('addKontribusi').style['display'] = 'inline';
+                document.getElementById('addKontribusi').innerHTML= 'Terima';
+            }
+            $('#addKontribusi').attr("onclick", "conKontributor('"+idTempat+"', '"+idUser+"')");
+            $('#deleteKontribusi').attr("onclick", "deleteKontributor('"+idTempat+"', '"+idUser+"')");
+            $('#mKontributor').modal('show');
+        });
+
+        $('#mKontributor').on('hidden.bs.modal', function(){
+            document.getElementById('addKontribusi').style['display'] = 'none';
+        });
+
+        $('#data_1').datepicker({
+            todayBtn: "linked",
+            autoclose: true,
+            format: "dd/mm/yyyy",
+            todayHighlight: true
+        });
+
+        $('#data_2').datepicker({
+            todayBtn: "linked",
+            autoclose: true,
+            format: "dd/mm/yyyy",
+            todayHighlight: true
+        });
+
+        function conKontributor(idTempat, idUser){
+            $.ajax({
+                headers : header,
+                type : 'POST',
+                dataType : 'json',
+                contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+                url : '/api/kontribusi',
+                data : {_method:'PUT', idTempat:idTempat, idUser:idUser},
+                success:function(data){
+                    toast(data.error, data.message);
+                    tabelKontributor.ajax.reload(null, false);
+                    $('#mKontributor').modal("hide");
+                }
+            });
+        }
+
+        function deleteKontributor(idTempat, idUser){
+            $.ajax({
+                headers : header,
+                type : 'POST',
+                dataType : 'json',
+                contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+                url : '/api/kontribusi',
+                data : {_method:'DELETE', idTempat:idTempat, idUser:idUser},
+                success:function(data){
+                    toast(data.error, data.message);
+                    tabelKontributor.ajax.reload(null, false);
+                    $('#mKontributor').modal("hide");
+                }
+            });
+        }
 
         mymap.setView([lat, lng], 15);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoicm9iaTAyNyIsImEiOiJjam02NGQ0YmkxNnJyM3BwN2FrMHQ2ZXg3In0.VGYNiP-1I4aPACHEkehV9A', {
@@ -497,14 +668,15 @@
 
             $('#mTambahInfo').on('shown.bs.modal', function(){
                 console.log("show");
-            });
-
-            $('#mTambahInfo').on('hidden.bs.modal', function(){
+            }).on('hidden.bs.modal', function(){
+                $( "#data_1" ).datepicker( "setDate", curdate);
                 $(this).find('form').trigger('reset');
                 $('.select2_bidang').empty().trigger('change');
                 $('.select2_bidang').val(null).trigger('change');
                 $('.select2_keahlian').empty().trigger('change');
                 $('.select2_keahlian').val(null).trigger('change');
+                document.getElementById('validationAddInfo').style['display'] = 'none';
+
             });
         });
 
@@ -517,25 +689,34 @@
            var project = document.getElementById('tProjectInfo').value;
            var durasi = document.getElementById('tDurasi').value;
            var keterangan = document.getElementById('tKetInfo').value;
+           var dTglBerakhir = $('#data_1').datepicker().data("datepicker").viewDate;
+           var tglBerakhir = dTglBerakhir / 1000;
+           var userStatus = true;
            
            var bidangSelected = $('.select2_bidang').val();
            var keahlianSelected = $('.select2_keahlian').val();
 
-           $.ajax({
-                headers : header,
-                type : 'POST',
-                dataType : 'json',
-                contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
-                url : '/api/info',
-                data : {idTempat:idTempat, bidang:bidangSelected, keahlian:keahlianSelected,
-                project:project, durasi:durasi, keterangan:keterangan ,idUser:idLogin},
-                success:function(data){
-                    console.log(data);
-                    $('#mTambahInfo').modal("hide");
-                    tabelInfo.ajax.reload(null, false)
-                }
-           });
-           
+           if(!project || !durasi || !keterangan || 
+           !dTglBerakhir || !bidangSelected || !keahlianSelected){
+                document.getElementById('validationAddInfo').style['display'] = 'inline';
+           }else{
+                $.ajax({
+                    headers : header,
+                    type : 'POST',
+                    dataType : 'json',
+                    contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+                    url : '/api/info',
+                    data : {idTempat:idTempat, bidang:bidangSelected, keahlian:keahlianSelected,
+                    project:project, durasi:durasi, tglBerakhir:tglBerakhir, 
+                    keterangan:keterangan ,idUser:idLogin, userStatus:userStatus},
+                    success:function(data){
+                        console.log(data);
+                        toast(data.error, data.message);
+                        $('#mTambahInfo').modal("hide");
+                        tabelInfo.ajax.reload(null, false)
+                    }
+                });
+            }
         });
 
         $('#bGanti').on('click', function(){
@@ -543,24 +724,32 @@
             var project = document.getElementById('dProjectInfo').value;
             var durasi = document.getElementById('dDurasi').value;
             var keterangan = document.getElementById('dKetInfo').value;
-            
+            var dTglBerakhir = $('#data_2').datepicker().data("datepicker").viewDate;
+            var tglBerakhir = dTglBerakhir / 1000;   
             var bidangSelected = $('.dSelect2_bidang').val();
             var keahlianSelected = $('.dSelect2_keahlian').val();
 
-            $.ajax({
-                headers : header,
-                type : 'POST',
-                dataType : 'json',
-                contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
-                url : '/api/info',
-                data : {_method:'PUT', id:idInfo, bidang:bidangSelected, 
-                keahlian:keahlianSelected, project:project, durasi:durasi, 
-                keterangan:keterangan ,idUser:idLogin},
-                success:function(data){
-                    $('#mDetailInfo').modal("hide");
-                    tabelInfo.ajax.reload(null, false);
-                }
-           });
+            if (!idInfo || !project || !durasi || 
+            !keterangan || !tglBerakhir || !bidangSelected ||
+            !keahlianSelected ) {
+                document.getElementById('validationEditInfo').style['display'] = 'inline';
+            }else{
+                $.ajax({
+                    headers : header,
+                    type : 'POST',
+                    dataType : 'json',
+                    contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+                    url : '/api/info',
+                    data : {_method:'PUT', id:idInfo, bidang:bidangSelected, 
+                    keahlian:keahlianSelected, project:project, durasi:durasi, 
+                    keterangan:keterangan ,idUser:idLogin},
+                    success:function(data){
+                        toast(data.error, data.message);
+                        $('#mDetailInfo').modal("hide");
+                        tabelInfo.ajax.reload(null, false);
+                    }
+                });
+            }
         });
 
         $('#bHapus').on('click', function(){
@@ -573,6 +762,7 @@
                 url : '/api/info/' + idInfo,
                 data : {_method:'DELETE'},
                 success:function(data){
+                    toast(data.error, data.message);
                     $('#mDetailInfo').modal("hide");
                     tabelInfo.ajax.reload(null, false);
                 }
@@ -580,9 +770,38 @@
             
         });
 
-        $('#bHide').on('click', function(){
-            console.log('Click');
-        });
+        function deleteRating(){
+            var idRating = document.getElementById('idRating').innerHTML;
+            $.ajax({
+                headers : header,
+                type : 'POST',
+                dataType : 'json',
+                contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+                url : '/api/rating/' + idRating,
+                data : {_method:'DELETE'},
+                success:function(data){
+                    toast(data.error, data.message);
+                    $('#mDetailPenilai').modal("hide");
+                    tabelRating.ajax.reload(null, false);
+                }
+            });
+        }
+
+        function toast(error, message){
+            setTimeout(function() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    showMethod: 'slideDown',
+                    timeOut: 2000
+                };
+                if(!error){
+                    toastr.success(message, 'Info');
+                }else{
+                    toastr.error(message, 'Info');
+                }
+            }, 0);
+        }
     </script>
 @endsection
         

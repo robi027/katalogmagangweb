@@ -62,4 +62,11 @@ class IDGeneratorController extends Controller
         $uuid = $keahlian . substr($charid, 0, 6);
         return $uuid;
     }
+
+    public function generateKerjasama(){
+        $kerjasama = "KS";
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $uuid = $kerjasama . substr($charid, 0, 6);
+        return $uuid;
+    }
 }

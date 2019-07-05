@@ -9,18 +9,6 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <span class="label label-success pull-right">All</span>
-                        <h5>Katalog</h5>
-                    </div>
-                    <div class="ibox-content">
-                        <h1 class="no-margins">{{$totalKatalog}}</h1>
-                        <small>Total Katalog</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <span class="label label-success pull-right">All</span>
                         <h5>Kerjasama</h5>
                     </div>
                     <div class="ibox-content">
@@ -30,6 +18,44 @@
                 </div>
             </div>
             <div class="col-lg-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-success pull-right">All</span>
+                        <h5>Pengajuan</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">{{$totalPengajuan}}</h1>
+                        <small>Total Pengajuan</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-success pull-right">All</span>
+                        <h5>Belum Diperpanjang</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">{{$totalPerpanjangan}}</h1>
+                        <small>Total Belum Diperpanjang</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-success pull-right">All</span>
+                        <h5>Katalog</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">{{$totalKatalog}}</h1>
+                        <small>Total Katalog</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <span class="label label-success pull-right">All</span>

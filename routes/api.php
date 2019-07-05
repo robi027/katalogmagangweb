@@ -46,6 +46,7 @@ Route::get('tempat/{id}', 'APITempatController@getDataTempat');
 Route::get('search', 'APITempatController@searchTempat');
 
 Route::get('info/tempat/{idTempat}', 'APIInfoController@getInfoTempat');
+Route::get('info/tempatkontribusi/{idTempat}', 'APIInfoController@getInfoTempatKontribusi');
 Route::get('info/{id}', 'APIInfoController@getDetailInfo');
 Route::post('info', 'APIInfoController@addInfo');
 Route::put('info', 'APIInfoController@editInfo');
@@ -70,3 +71,18 @@ Route::get('pertanyaan/my/{idUser}', 'APIPertanyaanController@getMyPertanyaan');
 Route::get('pertanyaan/{idChat}', 'APIPertanyaanController@getDetailPertanyaan');
 Route::post('jawaban', 'APIPertanyaanController@addJawaban');
 Route::delete('pertanyaan/{idChat}', 'APIPertanyaanController@deleteMyPertanyaan');
+
+Route::post('kontribusi/tempat', 'APIKontribusiController@getKontribusiTempat');
+Route::get('kontribusi/{idTempat}', 'APIKontribusiController@getKontribusi');
+Route::post('kontribusi', 'APIKontribusiController@reqKontribusi');
+Route::put('kontribusi', 'APIKontribusiController@conKontribusi');
+Route::delete('kontribusi', 'APIKontribusiController@deleteKontribusi');
+
+Route::get('kerjasama/tempat', 'APIKerjasamaController@getKerjasamaTempat');
+Route::get('kerjasama/{id}', 'APIKerjasamaController@getKerjasama');
+Route::post('kerjasama', 'APIKerjasamaController@reqKerjasama');
+Route::put('kerjasama', 'APIKerjasamaController@reReqKerjasama');
+Route::delete('kerjasama/{id}', 'APIKerjasamaController@deleteKerjasama');
+Route::get('detailkerjasama/{id}', 'APIKerjasamaController@getDetailKerjasama');
+Route::post('detailkerjasama', 'APIKerjasamaController@conKerjasama');
+Route::put('detailkerjasama', 'APIKerjasamaController@reKerjasama');

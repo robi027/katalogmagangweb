@@ -59,3 +59,66 @@ span.select2-container {
     height: 50px;
     width: 50px;
 }
+
+.bDetailKerjasama {
+    cursor: pointer;
+}
+
+.datepicker{
+    display: none;
+}
+
+.ui-datepicker-calendar {
+    display: none;
+}
+
+.datepicker-inline{
+    display: none;
+} 
+
+.datepicker-days{
+    display: none;
+}
+
+.bKontributor {
+    cursor: pointer;
+}
+
+.img-verified{
+    width: 5%;
+}
+
+#messagevalidation{
+    color: red;
+    display: none;
+}
+
+#validationConfirm{
+    color: red;
+    display: none;
+}
+
+#validationEditKerjasama{
+    color: red;
+    display: none;
+}
+
+#validationAddInfo{
+    color: red;
+    display: none;
+}
+
+#validationEditInfo{
+    color: red;
+    display: none;
+}
+
+#validationTambahTempat{
+    color: red;
+    display: none;
+}
+
+#validationChat{
+    color: red;
+    display: none;
+}

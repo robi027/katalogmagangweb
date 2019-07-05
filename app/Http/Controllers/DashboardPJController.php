@@ -7,12 +7,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Pengguna;
 use App\Tempat;
+use App\TempatKontribusi;
+use App\Kerjasama;
+use App\DetailKerjasama;
 
 class DashboardPJController extends Controller
 {
     public function index(){
         $angkatan = array();
         $ps = array();
+        date_default_timezone_set("asia/jakarta");
+        $tglNow = time();
 
         $login = Auth::user()->nama;
 
@@ -44,15 +49,24 @@ class DashboardPJController extends Controller
         
         $tempatCount = Tempat::count();
 
-        $kerjasamaCount = Tempat::leftJoin('pengguna', 'pengguna.id', '=', 'tempat.idUser')
+        $kerjasamaCount = TempatKontribusi::leftJoin('pengguna', 'pengguna.id', '=', 'tempatkontribusi.idUser')
         ->where('pengguna.level', '2')
         ->count();
 
         $nonActiveCount = Tempat::where('status', 0)->count();
 
+        $queryKerjasama = DetailKerjasama::where('tglBerakhir', '>', $tglNow)->count();
+        $queryPerpanjangan = DetailKerjasama::where('tglBerakhir', '<', $tglNow)->count();
+        
+        $queryPengajuan = Kerjasama::count();
+        $queryDetailKerjasama = DetailKerjasama::count();
+
+        $pengajuan = $queryPengajuan - $queryDetailKerjasama; 
+
         return view('pj.dashboard', ['login' => $login, 'angkatan' => $angkatan, 
-        'totalPengguna' => $penggunaCount, 'totalKatalog' => $tempatCount, 
-        'totalPS' => $ps, 'totalKerjasama' => $kerjasamaCount, 
-        'nonActive' => $nonActiveCount]);
+        'totalPengguna' => $penggunaCount, 'totalPS' => $ps, 
+        'totalKatalog' => $tempatCount, 'nonActive' => $nonActiveCount, 
+        'totalKerjasama' => $queryKerjasama, 'totalPerpanjangan' => $queryPerpanjangan,
+        'totalPengajuan' => $pengajuan]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Chat;
 use App\Pertanyaan;
 
@@ -11,6 +12,11 @@ class APIPertanyaanController extends Controller
     public function getMyPertanyaan($idUser){
         $response = array();
         $data = array();
+        date_default_timezone_set("asia/jakarta");
+        $tglNow = time();
+
+        $lastestPertanyaan = Pertanyaan::select('idChat', DB::raw('MAX(tglRecord) as last_tglRecord'))
+        ->groupBy('idChat');
 
         $query = Pertanyaan::select('pertanyaan.id', 'pertanyaan.isi',
         'pertanyaan.tglRecord', 'pertanyaan.idChat', 'pertanyaan.idPengirim',
@@ -21,14 +27,30 @@ class APIPertanyaanController extends Controller
         ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
         ->leftJoin('tempat', 'tempat.id', '=', 'chat.idTempat')
         ->leftJoin('tipe', 'tipe.id', '=', 'tempat.idTipe')
-        ->where('pertanyaan.idPengirim', $idUser)->groupBy('idChat');
+        ->joinSub($lastestPertanyaan, 'last_record', function($join){
+            $join->on('pertanyaan.tglRecord', 'last_record.last_tglRecord');
+        })
+        ->where('pertanyaan.idPengirim', $idUser)
+        ->orWhere('pertanyaan.idPenerima', $idUser)
+        ->groupBy('pertanyaan.idChat');
 
         if($query->count() > 0){
             foreach($query->get() as $item){
+                $waktu = ($tglNow - $item->tglRecord) / 60 % 60;
+                $ket = " menit yang lalu";
+                if($waktu > 59){
+                    $waktu = ($tglNow - $item->tglRecord) / 3600 % 24;
+                    $ket = " jam yang lalu";
+                    if($waktu > 23){
+                        $waktu = ($tglNow - $item->tglRecord) / 86400 % 7;
+                        $ket = " hari yang lalu";
+                    }
+                }
+
                 array_push($data, array(
                     'id' => $item->id,
                     'isi' => $item->isi,
-                    'tglRecord' => $item->tglRecord,
+                    'tglRecord' => $waktu . $ket,
                     'idPengirim' => $item->idPengirim,
                     'namaPengirim' => $item->namaPengirim,
                     'idChat' => $item->idChat,
@@ -153,19 +175,36 @@ class APIPertanyaanController extends Controller
     public function getdetailPertanyaan($idChat){
         $response = array();
         $data = array();
+        date_default_timezone_set("asia/jakarta");
+        $tglNow = time();
 
         $query = Chat::select('chat.id', 'chat.idTempat', 'tempat.nama as namaTempat',
         'chat.project', 'pertanyaan.id as idPertanyaan', 'pertanyaan.isi', 
         'pertanyaan.tglRecord', 'pertanyaan.idPengirim', 'pengirim.nama as namaPengirim', 
         'pertanyaan.idPenerima', 'penerima.nama as namaPenerima')
+        ->orderBy('pertanyaan.tglRecord', 'DESC')
         ->leftJoin('tempat', 'tempat.id', '=', 'chat.idTempat')
         ->leftJoin('pertanyaan', 'pertanyaan.idChat', '=', 'chat.id')
         ->leftJoin('pengguna as pengirim', 'pengirim.id', '=', 'pertanyaan.idPengirim')
         ->leftJoin('pengguna as penerima', 'penerima.id', '=', 'pertanyaan.idPenerima')
         ->where('chat.id', $idChat);
 
+        $queryFirst = Pertanyaan::orderBy('tglRecord', 'ASC')
+        ->where('pertanyaan.idChat', $idChat)->first();
+
         if($query->count() > 0){
             foreach($query->get() as $item){
+                $waktu = ($tglNow - $item->tglRecord) / 60 % 60;
+                $ket = " menit yang lalu";
+                if($waktu > 59){
+                    $waktu = ($tglNow - $item->tglRecord) / 3600 % 24;
+                    $ket = " jam yang lalu";
+                    if($waktu > 23){
+                        $waktu = ($tglNow - $item->tglRecord) / 86400 % 7;
+                        $ket = " hari yang lalu";
+                    }
+                }
+
                 array_push($data, array(
                     'id' => $item->id,
                     'idTempat' => $item->idTempat,
@@ -173,10 +212,10 @@ class APIPertanyaanController extends Controller
                     'project' => $item->project,
                     'idPertanyaan' => $item->idPertanyaan,
                     'isi' => $item->isi,
-                    'tglRecord' => $item->tglRecord,
+                    'tglRecord' => $waktu . $ket,
                     'idPengirim' => $item->idPengirim,
                     'namaPengirim' => $item->namaPengirim,
-                    'idPenerima' => $item->idPenerima,
+                    'idPenerima' => $queryFirst->idPenerima,
                     'namaPenerima' => $item->namaPenerima,
                 ));
             }

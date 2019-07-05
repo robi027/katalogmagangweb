@@ -20,11 +20,11 @@
                                 <div class="col-sm-3">
                                     <h2>Foto</h2>
                                     <div class="btn-group text-center img-pilihfoto">
-                                        <img class="img-responsive" id="image-preview" src="https://www.google.co.id/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"/>
+                                        <img class="img-responsive" id="image-preview" src="{{url('/img/selectfoto.svg')}}"/>
                                         <br>
-                                        <div class="text-center">
+                                        <div class="form-group text-center">
                                             <label title="Upload image file" for="inputImage" class="btn btn-primary">
-                                                <input type="file" accept="image/*" name="file" id="inputImage" class="hide" onchange="previewImage();">
+                                                <input type="file" accept="image/*" name="file" id="inputImage" class="form-control hide" onchange="previewImage();" required>
                                                 Pilih Foto
                                             </label>
                                         </div>
@@ -39,38 +39,38 @@
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Nama</label>
                                         <div class="col-sm-10">
-                                            <input type="text" id="nama" placeholder="Nama" name="nama" class="form-control">
+                                            <input type="text" id="nama" placeholder="Nama" name="nama" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Deskripsi</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control textarea-custom" rows="3" id="deskripsi" placeholder="Deskripsi"></textarea>
+                                            <textarea class="form-control textarea-custom" rows="3" id="deskripsi" placeholder="Deskripsi" required></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Email</label>
                                         <div class="col-sm-10">
-                                            <input type="email" id="email" placeholder="Email" class="form-control">
+                                            <input type="email" id="email" placeholder="Email" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Telepon</label>
                                         <div class="col-sm-10">
-                                            <input type="number" id="no" placeholder="No Telepon" class="form-control">
+                                            <input type="number" id="no" placeholder="No Telepon" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Website</label>
                                         <div class="col-sm-10">
-                                            <input type="text" id="website" placeholder="Website" class="form-control">
+                                            <input type="text" id="website" placeholder="Website" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Bidang</label>
                                         <div class="col-sm-10">
-                                            <select class="select2_bidang form-control" multiple="multiple">
+                                            <select class="select2_bidang form-control" multiple="multiple" required>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Keahlian</label>
                                         <div class="col-sm-10">
-                                            <select class="select2_keahlian form-control" multiple="multiple">
+                                            <select class="select2_keahlian form-control" multiple="multiple" required>
                                             </select>
                                         </div>
                                     </div>
@@ -82,10 +82,11 @@
                                     </div>
                                     <div class="form-group col-sm-12">
                                         <label control-label>Alamat</label> 
-                                        <textarea class="form-control textarea-custom" rows="3" id="alamat" placeholder="Alamat"></textarea>
-                                    </div>
+                                        <textarea class="form-control textarea-custom" rows="3" id="alamat" placeholder="Alamat" required></textarea>
+                                    </div> 
                                     <div class="form-group col-sm-12">
-                                        <button class="btn btn-block btn-primary" type="button" id="bPublish">Publish</button>
+                                        <button class="btn btn-block btn-primary" type="submit" onclick="publish(event)">Publish</button>
+                                        <small id="validationTambahTempat" class="pull-left">*Tidak Boleh Kosong</small>
                                     </div>
                                 </div>
                             </div>
@@ -152,6 +153,7 @@
         };
         
         $(document).ready(function(){
+            document.getElementById('validationTambahTempat').style['display'] = 'none';
             '@foreach($bidang as $iBidang)'
                 var option = new Option('{{$iBidang->bidang}}', '{{$iBidang->idBidang}}', false, false);
                 $('.select2_bidang').append(option).trigger('change');
@@ -168,42 +170,86 @@
             '@endforeach'
         });
 
-        $('#bPublish').on('click', function(){
+        function publish(event){
+            event.preventDefault();
+
             var bidang = $('.select2_bidang').val();
             var keahlian = $('.select2_keahlian').val();
+            var idTipe = $('.tipe').val();
+            var nama = $('#nama').val();
+            var deskripsi = $('#deskripsi').val();
+            var no = $('#no').val();
+            var email = $('#email').val();
+            var website = $('#website').val();
+            var alamat = $('#alamat').val();
+            var foto = $('input[type=file]')[0].files[0];
 
-            var formData = new FormData();
-            formData.append('idTipe', $('.tipe').val());
-            formData.append('idUser', idUser);
-            formData.append('nama', $('#nama').val());
-            formData.append('foto', $('input[type=file]')[0].files[0]);
-            $.each(bidang, function(i, item){
-                formData.append('bidang[]', bidang[i]);
-            });
-            $.each(keahlian, function(i, item){
-                formData.append('keahlian[]', keahlian[i]);
-            });
-            formData.append('deskripsi', $('#deskripsi').val());
-            formData.append('no', $('#no').val());
-            formData.append('email', $('#email').val());
-            formData.append('website', $('#website').val());
-            formData.append('lat', lat);
-            formData.append('lng', lng);
-            formData.append('alamat', $('#alamat').val());
+          
+            if(!bidang || !keahlian || !idTipe ||
+            !nama || !deskripsi || !no || !email ||
+            !website || !alamat){
+                document.getElementById('validationTambahTempat').style['display'] = 'inline';
+            }else{
+                var formData = new FormData();
+                formData.append('idTipe', $('.tipe').val());
+                formData.append('idUser', idUser);
+                formData.append('nama', $('#nama').val());
+                formData.append('foto', $('input[type=file]')[0].files[0]);
+                $.each(bidang, function(i, item){
+                    formData.append('bidang[]', bidang[i]);
+                });
+                $.each(keahlian, function(i, item){
+                    formData.append('keahlian[]', keahlian[i]);
+                });
+                formData.append('deskripsi', $('#deskripsi').val());
+                formData.append('no', $('#no').val());
+                formData.append('email', $('#email').val());
+                formData.append('website', $('#website').val());
+                formData.append('lat', lat);
+                formData.append('lng', lng);
+                formData.append('alamat', $('#alamat').val());
 
-            $.ajax({
-                headers : header,
-                type : 'POST',
-                dataType : 'json',
-                contentType : false,
-                processData : false,
-                url : '/api/tempat',
-                data : formData,
-                success:function(data){
-                    console.log(data);
+                $.ajax({
+                    headers : header,
+                    type : 'POST',
+                    dataType : 'json',
+                    contentType : false,
+                    processData : false,
+                    url : '/api/tempat',
+                    data : formData,
+                    success:function(data){
+                        console.log(data);
+                        toast(data.error, data.message);
+                        document.getElementById('validationTambahTempat').style['display'] = 'block';
+                    }
+                });
+            }
+            
+        };
+
+        function toast(error, message){
+            setTimeout(function() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    showMethod: 'slideDown',
+                    timeOut: 2000
+                };
+                if(!error){
+                    toastr.success(message, 'Info');
+                    refreshPage();
+                }else{
+                    toastr.error(message, 'Info');
+                    refreshPage();
                 }
-            });
-        });
+            }, 0);
+        }
+
+        function refreshPage(){
+            setTimeout(function(){
+                location.reload(true);
+            }, 1000);
+        }
 
     </script>
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Bookmark;
+use App\Kerjasama;
 
 class APIBookmarkController extends Controller
 {
@@ -56,6 +57,8 @@ class APIBookmarkController extends Controller
     public function getMyBookmark($idUser){
         $response = array();
         $data = array();
+        date_default_timezone_set("asia/jakarta");
+        $tglNow = time();
 
         $query = Bookmark::select('tempat.id', 'tipe.tipe', 'tempat.nama', 
         'tempat.foto', 'tempat.alamat')
@@ -70,17 +73,39 @@ class APIBookmarkController extends Controller
         ->where('bookmark.idUser', $idUser)
         ->groupBy('tempat.id');
 
+        $queryKerjasama = Kerjasama::join('detailkerjasama', 
+            'detailkerjasama.idKerjasama', '=', 'kerjasama.id')
+            ->get();
+
         if($query->count() > 0){
             foreach($query->get() as $item){
+                $id = $item->id;
+                $verified = FALSE;
+                foreach($queryKerjasama as $iKerjasama){
+                    $idTempat = $iKerjasama->idTempat;
+                    if($idTempat === $id){
+                        if($iKerjasama->tglBerakhir > $tglNow){
+                            $verified = TRUE;
+                        }
+                    }
+                }
+
+                if($item->perating !== 0){
+                    $rating = ($item->rating/$item->perating);
+                }else{
+                    $rating = 0;
+                }
+
                 array_push($data, array(
                     'id' => $item->id,
                     'tipe' => $item->tipe,
                     'nama' => $item->nama,
-                    'foto' => "http://192.168.1.80:8000/img/tempat/" . $item->foto,
+                    'foto' => url('/img/tempat') . '/' . $item->foto,
                     'alamat' => $item->alamat,
                     'bidang' => $item->bidang,
-                    'rating' => $item->rating,
-                    'perating' => $item->perating,
+                    'verified' => $verified,
+                    'rating' => $rating,
+                    'perating' => $item->perating
                 ));
             }
 

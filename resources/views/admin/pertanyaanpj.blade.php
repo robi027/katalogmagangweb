@@ -2,7 +2,7 @@
 @extends('admin.nav')
 @extends('admin.heading')
 
-@section('title', 'Pertanyaan')
+@section('title', 'Pertanyaan Penanggung Jawab')
 
 @section('contents')
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -59,7 +59,6 @@
         var header = {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')};
         var idChat;
         var idLogin = '{{$idLogin}}';
-        var idPenerima;
         var urlDetail;
 
         $(document).on('click', '.pagination a', function(e){
@@ -72,7 +71,7 @@
             $.ajax({
                 headers : header,
                 type : 'GET',
-                url : '/list-pertanyaan',
+                url : '/listpertanyaan-pj',
                 data : {page:page},
                 success:function(data){
                     $('.listPertanyaan').html(data);
@@ -83,12 +82,11 @@
 
 
         $(document).on('click', '.feed-element', function(e){
-            idChat = this.id;
-            idPenerima = $('.pengirim').attr('id');
+            idChat = this.id;            
             $.ajax({
                 headers : header,
                 type : 'GET',
-                url : '/detail-pertanyaan/' + idChat,
+                url : '/detailpertanyaan-admin/' + idChat,
                 success:function(data){
                     $('.detailPertanyaan').html(data);
                     urlDetail = this.url;
@@ -117,26 +115,30 @@
 
         $(document).on('click', '.bKirim', function(e){
             var isi = document.getElementById('text-chat').value;
-            console.log(urlDetail);
-            
-            $.ajax({
-                headers : header,
-                type : 'POST',
-                dataType : 'json',
-                url : '/api/jawaban',
-                contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
-                data : {idChat:idChat, isi:isi, idPengirim:idLogin, idPenerima:idPenerima},
-                success:function(data){
-                    $.ajax({
-                        headers : header,
-                        type : 'GET',
-                        url : urlDetail,
-                        success:function(data){
-                            $('.detailPertanyaan').html(data);
-                        }
-                    });
-                },
-            });
+            var idPenerima = document.getElementById('idPenerima').innerHTML;
+
+            if(!isi){
+                document.getElementById('validationChat').style['display'] = 'inline';
+            }else{
+                $.ajax({
+                    headers : header,
+                    type : 'POST',
+                    dataType : 'json',
+                    url : '/api/jawaban',
+                    contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+                    data : {idChat:idChat, isi:isi, idPengirim:idLogin, idPenerima:idPenerima},
+                    success:function(data){
+                        $.ajax({
+                            headers : header,
+                            type : 'GET',
+                            url : urlDetail,
+                            success:function(data){
+                                $('.detailPertanyaan').html(data);
+                            }
+                        });
+                    },
+                });
+            }
         });
 
         $(document).on('click', '.review-tempat', function(e){

@@ -65,6 +65,8 @@ class InfoController extends Controller
         $response = array();
         $bidangSelected = array();
         $keahlianSelected = array();
+        date_default_timezone_set("asia/jakarta");
+        $tglNow = time();
 
         $queryBidang = Bidang::get();
         $queryInfoBidang = InfoBidang::where('idInfo', $id)->get();
@@ -73,7 +75,7 @@ class InfoController extends Controller
         $queryInfoKeahlian = InfoKeahlian::where('idInfo', $id)->get();
 
         $query = Info::select('info.id', 'info.durasi', 'info.project',
-        'info.keterangan', 'info.tglPublish', 'pengguna.nama as pembagi')
+        'info.keterangan', 'info.tglPublish', 'info.tglBerakhir', 'pengguna.nama as pembagi')
         ->leftJoin('pengguna', 'pengguna.id', '=', 'info.idUser')
         ->where('info.id', $id);
 
@@ -119,6 +121,12 @@ class InfoController extends Controller
                 $response['detail']['project'] = $item->project;
                 $response['detail']['keterangan'] = $item->keterangan;
                 $response['detail']['tglPublish'] = $item->tglPublish;
+                if($item->tglBerakhir == null){
+                    $tglBerakhir = $tglNow;
+                }else{
+                    $tglBerakhir = $item->tglBerakhir;
+                }
+                $response['detail']['tglBerakhir'] = date('d/m/Y', $tglBerakhir);
                 $response['detail']['pembagi'] = $item->pembagi;
                 $response['detail']['bidang'] = $bidangSelected;
                 $response['detail']['keahlian'] = $keahlianSelected;

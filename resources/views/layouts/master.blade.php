@@ -12,6 +12,9 @@
     <link href="{{asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{asset('font-awesome/css/font-awesome.css') }}" rel="stylesheet">
 
+    {{-- Toastr --}}
+    <link href="{{asset('css/plugins/toastr/toastr.min.css') }}" rel="stylesheet">
+
     <link href="{{asset('css/animate.css') }}" rel="stylesheet">
     <link href="{{asset('css/style.css') }}" rel="stylesheet">
 
@@ -21,7 +24,16 @@
     {{-- Select2 --}}
     <link href="{{asset('css/plugins/select2/select2.min.css') }}" rel="stylesheet">
 
+    {{-- DataPicker --}}
+    <link href="{{asset('css/plugins/datapicker/datepicker3.css') }}" rel="stylesheet">
+
     <script src="{{asset('js/jquery-2.1.1.js') }}"></script>
+
+    {{-- Toastr --}}
+    <script src="{{asset('js/plugins/toastr/toastr.min.js') }}"></script>
+
+    {{-- DataPicker --}}
+    <script src="{{asset('js/plugins/datapicker/bootstrap-datepicker.js') }}"></script>
     
     {{-- Select2 --}}
     <script src="{{asset('js/plugins/select2/select2.full.min.js') }}"></script>
@@ -59,9 +71,9 @@
                 <div class="navbar-header">
                     <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
                     <form role="search" class="navbar-form-custom" method="post" action="#">
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
-                        </div>
+                        </div> --}}
                     </form>
                 </div>
                 <ul class="nav navbar-top-links navbar-right">

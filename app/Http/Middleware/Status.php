@@ -22,11 +22,11 @@ class Status
             if(Auth::check()){
                 if(Auth::user()->level == 1){
                     return redirect('/admin/dashboard');
-                }else if(Auth::user()->level == 2){
-                    return redirect('pj/dashboard');
-                }    
+                }elseif(Auth::user()->level == 2){
+                    return redirect('/pj/dashboard');
+                }
             }else{
-                return redirect('login');
+                return redirect('/login');
             }
         return $response;
     }

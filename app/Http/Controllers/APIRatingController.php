@@ -30,10 +30,10 @@ class APIRatingController extends Controller
                     'id' => $item->id,
                     'rating' => $item->rating,
                     'project' => $item->project,
-                    'tglPublish' => $item->tglPublish,
+                    'tglPublish' => date('d/m/Y', $item->tglPublish),
                     'penilai' => $item->penilai,
                     'bidang' => $item->bidang,
-                    'keahlian' => $item->keahlian,
+                    'keahlian' => $item->keahlian
                 ));
             }
 
@@ -53,7 +53,7 @@ class APIRatingController extends Controller
         $response = array();
 
         $query = Rating::select('rating.id', 'rating.rating', 
-        'rating.project', 'rating.tglPublish', 'rating.idUser as idPenilai', 
+        'rating.project', 'rating.keterangan', 'rating.tglPublish', 'rating.idUser as idPenilai', 
         'pengguna.nama as penilai', 'tempat.id as idTempat', 
         'tempat.nama as namaTempat', 'tipe.tipe')
         ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
@@ -74,7 +74,8 @@ class APIRatingController extends Controller
                 $response['detail']['id'] = $item->id;
                 $response['detail']['rating'] = $item->rating;
                 $response['detail']['project'] = $item->project;
-                $response['detail']['tglPublish'] = $item->tglPublish;
+                $response['detail']['keterangan'] = $item->keterangan;
+                $response['detail']['tglPublish'] = date('d/m/Y', $item->tglPublish);
                 $response['detail']['idPenilai'] = $item->idPenilai;
                 $response['detail']['penilai'] = $item->penilai;
                 $response['detail']['bidang'] = $item->bidang;
@@ -100,6 +101,7 @@ class APIRatingController extends Controller
         $idUser = $request->input('idUser');
         $rating = $request->input('rating');
         $project = $request->input('project');
+        $keterangan = $request->input('keterangan');
         date_default_timezone_set("asia/jakarta");
         $tglPublish = time();
         
@@ -121,8 +123,9 @@ class APIRatingController extends Controller
         }
 
         $fieldRating = array('id' => $id, 'rating' => $rating, 
-        'project' => $project, 'tglPublish' => $tglPublish, 
-        'idTempat' => $idTempat, 'idUser' => $idUser);
+        'project' => $project, 'keterangan' => $keterangan, 
+        'tglPublish' => $tglPublish, 'idTempat' => $idTempat, 
+        'idUser' => $idUser);
 
         $queryRating = Rating::insert($fieldRating);
 
@@ -157,6 +160,7 @@ class APIRatingController extends Controller
         $id = $request->input('id');
         $rating = $request->input('rating');
         $project = $request->input('project');
+        $keterangan = $request->input('keterangan');
         
         $bidang = json_decode(json_encode($request->input('bidang')), true);
         $keahlian = json_decode(json_encode($request->input('keahlian')), true);
@@ -165,7 +169,8 @@ class APIRatingController extends Controller
         $queryBidang = false;
         $queryKeahlian = false;
 
-        $fieldRating = array('rating' => $rating, 'project' => $project);
+        $fieldRating = array('rating' => $rating, 'project' => $project, 
+        'keterangan' => $keterangan);
 
         $queryUpdateRating = Rating::where('id', $id)->update($fieldRating);
 
@@ -279,7 +284,7 @@ class APIRatingController extends Controller
                     'id' => $item->id,
                     'rating' => $item->rating,
                     'project' => $item->project,
-                    'tglPublish' => $item->tglPublish,
+                    'tglPublish' => date('d/m/Y', $item->tglPublish),
                     'penilai' => $item->penilai,
                     'bidang' => $item->bidang,
                     'keahlian' => $item->keahlian,

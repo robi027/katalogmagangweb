@@ -23,6 +23,10 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::get('/tempat', 'TempatController@indexDaftar');
     Route::post('/tempat', 'TempatController@getAllData');
+    Route::post('/tempat/kerjasama', 'TempatController@getAllKerjasama');
+    Route::get('/tempat/kerjasama', 'TempatController@getAllTempat');
+    Route::post('/kerjasama', 'TempatController@addKerjasama');
+    Route::delete('/kerjasama/{id}', 'TempatController@deleteKerjasama');
     Route::put('/tempat', 'TempatController@editTempat');
     Route::get('/detail-tempat/{id}', 'TempatController@indexDetail');
     Route::get('/tambah-tempat', 'TempatController@indexTambah');
@@ -35,10 +39,15 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('/listRating', 'RatingController@getRatingTempat');
     Route::get('/rating/{id}', 'RatingController@getRating');
 
-    Route::get('/pertanyaan', 'PertanyaanController@indexDaftar');
-    Route::get('/list-pertanyaan', 'PertanyaanController@getMorePertanyaan');
-    Route::get('/detail-pertanyaan/{idChat}', 'PertanyaanController@detailPertanyaan');
-
+    Route::get('/pertanyaan-mahasiswa', 'PertanyaanController@indexPertanyaanMahasiswa');
+    Route::get('/listpertanyaan-mahasiswa', 'PertanyaanController@getMorePertanyaanMahasiswa');
+    Route::get('/detailpertanyaan-admin/{idChat}', 'PertanyaanController@detailPertanyaanAdmin');
+    Route::get('/detailpertanyaan-pj/{idChat}', 'PertanyaanController@detailPertanyaanPJ');
+    Route::get('/pertanyaan-pj', 'PertanyaanController@indexPertanyaanPJ');
+    Route::get('/listpertanyaan-pj', 'PertanyaanController@getMorePertanyaanPJ');
+    Route::get('/pertanyaan', 'PertanyaanController@indexPertanyaan');
+    Route::get('/listpertanyaan', 'PertanyaanController@getMorePertanyaan');
+    
     Route::get('/keahlian', 'KeahlianController@indexDaftar');
     Route::post('/keahlian', 'KeahlianController@getAllData');
     Route::post('/tambah-keahlian', 'KeahlianController@addKeahlian');
@@ -48,4 +57,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('/bidang', 'BidangController@getAllData');
     Route::post('/tambah-bidang', 'BidangController@addBidang');
     Route::put('/bidang', 'BidangController@editBidang');
+
+    Route::post('/kontribusi/tempat', 'KontribusiController@getKontribusiTempat');
+
 });

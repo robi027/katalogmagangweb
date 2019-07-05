@@ -8,7 +8,6 @@ use App\RatingBidang;
 use App\InfoBidang;
 use App\TempatBidang;
 use App\Kemampuan;
-use App\Berkeahlian;
 
 class APIBidangController extends Controller
 {
@@ -16,7 +15,7 @@ class APIBidangController extends Controller
         $response = array();
         $data = array();
 
-        $query = Bidang::get();
+        $query = Bidang::orderBy('bidang', 'ASC')->get();
         $queryCount = Bidang::count();
 
         if($queryCount > 0){
@@ -42,7 +41,7 @@ class APIBidangController extends Controller
         $response = array();
         $data = array();
         
-        $queryBidang = Bidang::get();
+        $queryBidang = Bidang::orderBy('bidang', 'ASC')->get();
 
         $queryRating = RatingBidang::select('idRating', 'idBidang')
         ->where('idRating', $idRating)
@@ -83,7 +82,7 @@ class APIBidangController extends Controller
         $response = array();
         $data = array();
 
-        $queryBidang = Bidang::get();
+        $queryBidang = Bidang::orderBy('bidang', 'ASC')->get();
 
         $queryInfo = InfoBidang::where('idInfo', $idInfo)->get();
 
@@ -120,7 +119,7 @@ class APIBidangController extends Controller
         $response = array();
         $data = array();
 
-        $queryBidang = Bidang::get();
+        $queryBidang = Bidang::orderBy('bidang', 'ASC')->get();
 
         $queryTempat = TempatBidang::where('idTempat', $idTempat)->get();
 
@@ -156,7 +155,7 @@ class APIBidangController extends Controller
         $response = array();
         $data = array();
 
-        $queryBidang = Bidang::get();
+        $queryBidang = Bidang::orderBy('bidang', 'ASC')->get();
 
         $queryPengguna = Kemampuan::where('idUser', $idUser)->get();
 

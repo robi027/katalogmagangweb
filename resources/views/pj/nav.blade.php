@@ -20,13 +20,16 @@
                 </li>
                 <li class="{{ request()->is('tempat') || request()->is('add-tempat') ||
                 request()->is('detail-tempat')? 'active' : '' }}">
-                    <a href="{{ url('tempat') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Katalog Tempat</span></a>
+                    <a href="{{ url('tempat') }}"><i class="fa fa-institution"></i> <span class="nav-label">Katalog Tempat</span></a>
+                </li>
+                <li class="{{ request()->is('pertanyaan') ? 'active' : '' }}">
+                    <a href="{{ url('pertanyaan') }}"><i class="fa fa-question-circle"></i> <span class="nav-label">Pertanyaan</span></a>
                 </li>
                 <li class="{{ request()->is('keahlian') ? 'active' : '' }}">
-                    <a href="{{ url('keahlian') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Keahlian</span></a>
+                    <a href="{{ url('keahlian') }}"><i class="fa fa-suitcase"></i> <span class="nav-label">Keahlian</span></a>
                 </li>
                 <li class="{{ request()->is('bidang') ? 'active' : '' }}">
-                    <a href="{{ url('bidang') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Bidang</span></a>
+                    <a href="{{ url('bidang') }}"><i class="fa fa-graduation-cap"></i> <span class="nav-label">Bidang</span></a>
                 </li>
             </ul>
         </div>

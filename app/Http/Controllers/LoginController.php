@@ -16,6 +16,11 @@ class LoginController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
+        // $password = bcrypt($request->input('password'));
+        // date_default_timezone_set("asia/jakarta");
+        // $tglPublish = time();
+        // dd($password . "+" . $tglPublish);
+
         $pengguna = array('email' => $email, 'password' => $password);
 
         if(Auth::attempt($pengguna)){
@@ -23,6 +28,9 @@ class LoginController extends Controller
                 return redirect()->intended('/admin/dashboard');
             } elseif(Auth::user()->level == 2){
                 return redirect()->intended('/pj/dashboard');
+            } elseif (Auth::user()->level == 0) {
+                Auth::logout();
+                return redirect('login');
             }
         }else{
             return redirect('login');

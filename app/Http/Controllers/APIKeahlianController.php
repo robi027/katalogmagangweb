@@ -14,7 +14,7 @@ class APIKeahlianController extends Controller
     public function getAllKeahlian(){
         $response = array();
         $data = array();
-        $query = Keahlian::select();
+        $query = Keahlian::select()->orderBy('keahlian', 'ASC');
 
         if($query->count() > 0){
             foreach($query->get() as $item){
@@ -38,7 +38,7 @@ class APIKeahlianController extends Controller
         $response = array();
         $data = array();
 
-        $queryKeahlian = Keahlian::get();
+        $queryKeahlian = Keahlian::orderBy('keahlian', 'ASC')->get();
 
         $queryRating = RatingKeahlian::where('idRating', $idRating)->get();
 
@@ -79,7 +79,7 @@ class APIKeahlianController extends Controller
         $response = array();
         $data = array();
 
-        $queryKeahlian = Keahlian::get();
+        $queryKeahlian = Keahlian::orderBy('keahlian', 'ASC')->get();
 
         $queryInfo = InfoKeahlian::where('idInfo', $idInfo)->get();
 
@@ -119,7 +119,7 @@ class APIKeahlianController extends Controller
         $response = array();
         $data = array();
 
-        $queryKeahlian = Keahlian::get();
+        $queryKeahlian = Keahlian::orderBy('keahlian', 'ASC')->get();
 
         $queryTempat = TempatKeahlian::where('idtempat', $idTempat)->get();
 
@@ -160,7 +160,7 @@ class APIKeahlianController extends Controller
         $response = array();
         $data = array();
 
-        $queryKeahlian = Keahlian::get();
+        $queryKeahlian = Keahlian::orderBy('keahlian', 'ASC')->get();
 
         $queryPengguna = Berkeahlian::where('idUser', $idUser)->get();
 

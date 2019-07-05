@@ -37,38 +37,38 @@
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Nama</label>
                                         <div class="col-sm-10">
-                                            <input type="text" id="nama" placeholder="Nama" class="form-control" value="{{$nama}}">
+                                            <input type="text" id="nama" placeholder="Nama" class="form-control" value="{{$nama}}" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Deskripsi</label>
                                         <div class="col-sm-10">
-                                        <textarea class="form-control textarea-custom" rows="3" id="deskripsi" placeholder="Deskripsi">{{$deskripsi}}</textarea>
+                                        <textarea class="form-control textarea-custom" rows="3" id="deskripsi" placeholder="Deskripsi" required>{{$deskripsi}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Email</label>
                                         <div class="col-sm-10">
-                                            <input type="email" id="email" placeholder="Email" class="form-control" value="{{$email}}">
+                                            <input type="email" id="email" placeholder="Email" class="form-control" value="{{$email}}" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Telepon</label>
                                         <div class="col-sm-10">
-                                            <input type="number" id="no" placeholder="No Telepon" class="form-control" value="{{$no}}">
+                                            <input type="number" id="no" placeholder="No Telepon" class="form-control" value="{{$no}}" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Website</label>
                                         <div class="col-sm-10">
-                                            <input type="text" id="website" placeholder="Website" class="form-control" value="{{$website}}">
+                                            <input type="text" id="website" placeholder="Website" class="form-control" value="{{$website}}" required>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Bidang</label>
                                         <div class="col-sm-10">
-                                            <select class="select2_bidang form-control" multiple="multiple">
+                                            <select class="select2_bidang form-control" multiple="multiple" required>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group"><label class="col-sm-2 control-label">Keahlian</label>
                                         <div class="col-sm-10">
-                                            <select class="select2_keahlian form-control" multiple="multiple">
+                                            <select class="select2_keahlian form-control" multiple="multiple" required>
                                             </select>
                                         </div>
                                     </div>
@@ -80,15 +80,16 @@
                                     </div>
                                     <div class="form-group col-sm-12">
                                         <label control-label>Alamat</label> 
-                                        <textarea class="form-control textarea-custom" rows="3" id="alamat" placeholder="Alamat">{{$alamat}}</textarea>
+                                        <textarea class="form-control textarea-custom" rows="3" id="alamat" placeholder="Alamat" required>{{$alamat}}</textarea>
                                     </div>
                                     <div class="form-group col-sm-12">
                                         <button class="btn btn-block" id="bAktif" type="button">Loading...</button>
-                                        <button class="btn btn-block btn-primary" id="bPublish" type="submit">Update</button>
+                                        <button class="btn btn-block btn-primary" type="submit" onclick="publish(event)">Update</button>
+                                        <small id="validationConfirm" class="pull-left">*Tidak Boleh Kosong</small>
                                     </div>
                                 </div>
                             </div>
-                        {{-- </form> --}}
+                        </form>
                     </div>
                 </div>
             </div>
@@ -185,45 +186,77 @@
             }
         });
 
-        $('#bPublish').on('click', function(e){
+        function publish(event){
+            event.preventDefault();
             var bidang = $('.select2_bidang').val();
             var keahlian = $('.select2_keahlian').val();
+            var idTipe = $('.tipe').val();
+            var nama = $('#nama').val();
+            var deskripsi = $('#deskripsi').val();
+            var no = $('#no').val();
+            var email = $('#email').val();
+            var website = $('#website').val();
+            var alamat = $('#alamat').val();
 
-            var formData = new FormData();
-            formData.append('_method', 'PUT');
-            formData.append('id', idTempat);
-            formData.append('idTipe', $('.tipe').val());
-            formData.append('nama', $('#nama').val());
-            formData.append('deskripsi', $('#deskripsi').val());
-            formData.append('no', $('#no').val());
-            formData.append('email', $('#email').val());
-            formData.append('website', $('#website').val());
-            formData.append('lat', lat);
-            formData.append('lng', lng);
-            formData.append('alamat', $('#alamat').val());
-            formData.append('status', status);
-            formData.append('foto', $('input[type=file]')[0].files[0]);
-            $.each(bidang, function(i, item){
-                formData.append('bidang[]', bidang[i]);
-            });
-            $.each(keahlian, function(i, item){
-                formData.append('keahlian[]', keahlian[i]);
-            });
+            if(!bidang || !keahlian || !idTipe || 
+            !nama || !deskripsi || !no || !email || 
+            !website || !alamat){
+                document.getElementById('validationConfirm').style['display'] = 'inline';
+            }else{
+                
+                var formData = new FormData();
+                formData.append('_method', 'PUT');
+                formData.append('id', idTempat);
+                formData.append('idTipe', $('.tipe').val());
+                formData.append('nama', $('#nama').val());
+                formData.append('deskripsi', $('#deskripsi').val());
+                formData.append('no', $('#no').val());
+                formData.append('email', $('#email').val());
+                formData.append('website', $('#website').val());
+                formData.append('lat', lat);
+                formData.append('lng', lng);
+                formData.append('alamat', $('#alamat').val());
+                formData.append('status', status);
+                formData.append('foto', $('input[type=file]')[0].files[0]);
+                $.each(bidang, function(i, item){
+                    formData.append('bidang[]', bidang[i]);
+                });
+                $.each(keahlian, function(i, item){
+                    formData.append('keahlian[]', keahlian[i]);
+                });
 
-            $.ajax({
-                headers : header,
-                type : 'POST',
-                dataType : 'json',
-                contentType : false,
-                processData : false,
-                url : '/api/tempat',
-                data : formData,
-                success:function(data){
-                    console.log(data);
+                $.ajax({
+                    headers : header,
+                    type : 'POST',
+                    dataType : 'json',
+                    contentType : false,
+                    processData : false,
+                    url : '/api/tempat',
+                    data : formData,
+                    success:function(data){
+                        console.log(data);
+                        toast(data.error, data.message);
+                        document.getElementById('validationConfirm').style['display'] = 'none';
+                    }
+                });
+            }   
+        };
+
+        function toast(error, message){
+            setTimeout(function() {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    showMethod: 'slideDown',
+                    timeOut: 2000
+                };
+                if(!error){
+                    toastr.success(message, 'Info');
+                }else{
+                    toastr.error(message, 'Info');
                 }
-            });
-            
-        });
+            }, 0);
+        }
     </script>
 @endsection
         

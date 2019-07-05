@@ -18,8 +18,16 @@
                 <li class="{{ request()->is('admin/dashboard') ? 'active' : '' }}">
                     <a href="{{ url('admin/dashboard') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></a>
                 </li>
-                <li class="{{ request()->is('pertanyaan') ? 'active' : '' }}">
-                    <a href="{{ url('pertanyaan') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Pertanyaan</span></a>
+                <li class="{{ request()->is('pertanyaan-mahasiswa') || request()->is('pertanyaan-pj') ? 'active' : '' }}">
+                    <a href="#"><i class="fa fa-question-circle"></i> <span class="nav-label">Pertanyaan</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class=" {{ Request::is('pertanyaan-mahasiswa') ? 'active' : '' }}">
+                            <a href="{{ url('pertanyaan-mahasiswa') }}">Mahasiswa</a>
+                        </li>
+                        <li class=" {{ Request::is('pertanyaan-pj') ? 'active' : '' }}">
+                            <a href="{{ url('pertanyaan-pj') }}">Penanggung Jawab PKL</a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>

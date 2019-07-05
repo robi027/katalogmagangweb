@@ -24,8 +24,16 @@
     <script type="text/javascript">
 
         $(document).ready(function(){
+            var tgl = [];
+            var totalpertanyaan =[];
+
+            '@foreach($jumlahPertanyaan as $iPertanyaan)'
+                tgl.unshift('{{$iPertanyaan->tgl}}');
+                totalpertanyaan.unshift({{$iPertanyaan->total}});
+            '@endforeach'     
+
             var lineData = {
-                labels: ["0", "2010", "2017", "2018", "2019"],
+                labels: tgl,
                 datasets: [
                     {
                         label: "Example dataset",
@@ -35,7 +43,7 @@
                         pointStrokeColor: "#fff",
                         pointHighlightFill: "#fff",
                         pointHighlightStroke: "rgba(26,179,148,1)",
-                        data: [0, 10, 4, 55, 2]
+                        data: totalpertanyaan
                     }
                 ]
             };

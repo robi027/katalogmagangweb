@@ -11,6 +11,9 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Data Tempat</h5>
+                        <div class="pull-right">        
+                            <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#mTanyakan"><i class="fa fa-question-circle"></i> Tanyakan</button>
+                        </div>
                     </div>
                     <div class="ibox-content">
                         <div class="row">
@@ -21,10 +24,13 @@
                             </div>
                             <div class="col-md-8">
                                 <h2 class="font-bold m-b-xs">
-                                    {{ $nama . ' ('.$tipe.')' }}  <span class="label lStatus">Loading...</span>
+                                    {{ $nama . ' ('.$tipe.')' }}
+                                    @if($kerjasama === 2)
+                                        <img class="img-verified" src="{{url('/img/verified.svg')}}">
+                                    @endif
                                 </h2>
                                 <small>
-                                    {{$bidang}}
+                                    {{$bidang}} <span class="label lStatus">Loading...</span>
                                 </small>
                                 <hr>
                                 <h4>Deskripsi</h4>
@@ -93,48 +99,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal Tambah Info --}}
-    <div class="modal fade" id="mTambahInfo" role="dialog">
-        <div class="modal-dialog ">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Tambah Info</h4>
-                </div>
-                <div class="modal-body">
-                    <form role="form">
-                        <div class="form-group"><label>Bidang</label>
-                            <select class="select2_bidang form-control" id="tBidangInfo" multiple="multiple">
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Keahlian</label>
-                            <select class="select2_keahlian form-control" id="tKeahlianInfo" multiple="multiple">
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Project</label> 
-                            <input type="text" id="tProjectInfo" placeholder="Project Yang Akan Dikerjakan" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Durasi</label>
-                            <div class="input-group m-b">
-                                <input type="number" id="tDurasi" placeholder="Durasi" class="form-control">
-                                <span class="input-group-addon">bulan</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Keterangan</label>
-                            <textarea class="form-control textarea-custom" rows="2" id="tKetInfo" placeholder="Keterangan"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-default" type="submit" data-dismiss="modal"><strong>Close</strong></button>
                 </div>
             </div>
         </div>
@@ -272,6 +236,39 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-default" type="submit" data-dismiss="modal"><strong>Close</strong></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Tanyakan --}}
+    <div class="modal fade" id="mTanyakan" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Tanyakan ke Penanggung Jawab</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form">
+                        <div class="form-group"><label>Kepada</label>
+                            <div>
+                                <span><i class="fa fa-user"></i> Penanggung Jawab Kerjasama</span>    
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Project</label> 
+                            <input type="text" placeholder="Project" class="form-control" id="iProject">
+                        </div>
+                        <div class="form-group">
+                            <label>Pertanyaan</label>
+                            <textarea class="form-control textarea-custom" rows="3" id="taPertanyaan" placeholder="Pertanyaan"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="submit" data-dismiss="modal"><strong>Close</strong></button>
+                    <button class="btn btn-primary" type="submit" onclick="addPertanyaan()"><strong>Send</strong></button>
                 </div>
             </div>
         </div>
@@ -437,12 +434,8 @@
         }).addTo(mymap);
         var marker = L.marker([lat, lng]).addTo(mymap);
 
-        $(".select2_bidang").select2({
-            placeholder: "Pilih Bidang"
-        });
-
-        $(".select2_keahlian").select2({
-            placeholder: "Pilih Keahlian"
+        $(".select2_pj").select2({
+            placeholder: "Penanggung Jawab Kerjasama"
         });
 
         $(".dSelect2_bidang").select2({
@@ -456,6 +449,31 @@
         $('.bDetailPengguna').on('click', function(){
             $('#mDetailPengguna').modal("show");
         });
+
+        $('#mTanyakan').on('hidden.bs.modal', function(){
+            $(this).find('form').trigger('reset');
+        });
+
+        function addPertanyaan(){
+            var project = document.getElementById('iProject').value;
+            var isi = document.getElementById('taPertanyaan').value;
+
+            $.ajax({
+                headers : header,
+                type : 'POST',
+                dataType : 'json',
+                contentType : 'application/x-www-form-urlencoded; charset=UTF-8',
+                url : '/api/pertanyaan',
+                data: {idTempat:idTempat, project:project, isi:isi, 
+                idPengirim:idLogin, idPenerima:"US2407AC"},
+                success:function(data){
+                    console.log(data);
+                },
+                complete:function(){
+                    $('#mTanyakan').modal('hide');
+                }
+            });
+        }
 
     </script>
 @endsection
