@@ -23,14 +23,14 @@ class PertanyaanController extends Controller
         ->groupBy('idChat');
 
         $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-        'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+        'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
         'idPenerima', 'idTempat', 'pengguna.foto')
-        ->orderBy('tglRecord', 'DESC')
+        ->orderBy('pertanyaan.tglRecord', 'DESC')
         ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
         ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
         ->joinSub($lastestPertanyaan, 'last_Record', function($join){
             $join->on('pertanyaan.tglRecord', 'last_Record.last_tglRecord');
-        })     
+        })
         ->where('idPenerima', $idLogin)
         ->orWhere('idPengirim', $idLogin)
         ->groupBy('pertanyaan.idChat')
@@ -52,9 +52,9 @@ class PertanyaanController extends Controller
             ->groupBy('idChat');
             
             $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-            'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+            'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
             'idPenerima', 'idTempat', 'pengguna.foto')
-            ->orderBy('tglRecord', 'DESC')
+            ->orderBy('pertanyaan.tglRecord', 'DESC')
             ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
             ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
             ->joinSub($lastestPertanyaan, 'last_Record', function($join){
@@ -78,9 +78,9 @@ class PertanyaanController extends Controller
         ->groupBy('idChat');
 
         $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-        'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+        'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
         'idPenerima', 'idTempat', 'pengguna.foto')
-        ->orderBy('tglRecord', 'DESC')
+        ->orderBy('pertanyaan.tglRecord', 'DESC')
         ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
         ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
         ->joinSub($lastestPertanyaan, 'last_Record', function($join){
@@ -103,9 +103,9 @@ class PertanyaanController extends Controller
             ->groupBy('idChat');
             
             $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-            'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+            'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
             'idPenerima', 'idTempat', 'pengguna.foto')
-            ->orderBy('tglRecord', 'DESC')
+            ->orderBy('pertanyaan.tglRecord', 'DESC')
             ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
             ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
             ->joinSub($lastestPertanyaan, 'last_Record', function($join){
@@ -125,9 +125,9 @@ class PertanyaanController extends Controller
         $dataChat = array();
 
         $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-            'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+            'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
             'idPenerima', 'chat.idTempat')
-            ->orderBy('tglRecord', 'DESC')
+            ->orderBy('pertanyaan.tglRecord', 'DESC')
             ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
             ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
             ->where('idChat', $idChat)->get();
@@ -171,9 +171,9 @@ class PertanyaanController extends Controller
         ->groupBy('idChat');
 
         $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-        'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+        'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
         'idPenerima', 'idTempat', 'pengguna.foto')
-        ->orderBy('tglRecord', 'DESC')
+        ->orderBy('pertanyaan.tglRecord', 'DESC')
         ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
         ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
         ->joinSub($lastestPertanyaan, 'last_Record', function($join){
@@ -196,9 +196,9 @@ class PertanyaanController extends Controller
             ->groupBy('idChat');
             
             $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-            'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+            'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
             'idPenerima', 'idTempat', 'pengguna.foto')
-            ->orderBy('tglRecord', 'DESC')
+            ->orderBy('pertanyaan.tglRecord', 'DESC')
             ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
             ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
             ->joinSub($lastestPertanyaan, 'last_Record', function($join){
@@ -218,9 +218,9 @@ class PertanyaanController extends Controller
         $dataChat = array();
 
         $queryPertanyaan = Pertanyaan::select('pertanyaan.idChat','pertanyaan.id as idPertanyaan',
-            'project', 'isi', 'tglRecord', 'idPengirim', 'pengguna.nama as namaPengirim',
+            'project', 'isi', DB::raw('FROM_UNIXTIME(tglRecord, "%d/%m/%Y") as tglRecord'), 'idPengirim', 'pengguna.nama as namaPengirim',
             'idPenerima', 'chat.idTempat')
-            ->orderBy('tglRecord', 'DESC')
+            ->orderBy('pertanyaan.tglRecord', 'DESC')
             ->leftJoin('chat', 'chat.id', '=', 'pertanyaan.idChat')
             ->leftJoin('pengguna', 'pengguna.id', '=', 'pertanyaan.idPengirim')
             ->where('idChat', $idChat)->get();

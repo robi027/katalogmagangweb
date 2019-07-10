@@ -742,7 +742,7 @@
                     url : '/api/info',
                     data : {_method:'PUT', id:idInfo, bidang:bidangSelected, 
                     keahlian:keahlianSelected, project:project, durasi:durasi, 
-                    keterangan:keterangan ,idUser:idLogin},
+                    keterangan:keterangan, tglBerakhir:tglBerakhir, idUser:idLogin},
                     success:function(data){
                         toast(data.error, data.message);
                         $('#mDetailInfo').modal("hide");

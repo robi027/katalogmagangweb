@@ -537,6 +537,8 @@ class APITempatController extends Controller
     public function searchTempat(Request $request){
         $response = array();
         $data = array();
+        date_default_timezone_set("asia/jakarta");
+        $tglNow = time();
         $keyword = $request->input('keyword');
 
         if($keyword != null){
@@ -552,7 +554,27 @@ class APITempatController extends Controller
             ->where('tempat.nama', 'like', '%' .$keyword. '%')->groupBy('tempat.id');
 
             if($query->count() > 0){
+                $queryKerjasama = Kerjasama::join('detailkerjasama', 
+                    'detailkerjasama.idKerjasama', '=', 'kerjasama.id')
+                    ->get();
                 foreach($query->get() as $item){
+                    $id = $item->id;
+                    $verified = FALSE;
+                    foreach($queryKerjasama as $iKerjasama){
+                        $idTempat = $iKerjasama->idTempat;
+                        if($idTempat === $id){
+                            if($iKerjasama->tglBerakhir > $tglNow){
+                                $verified = TRUE;
+                            }
+                        }
+                    }
+
+                    if($item->perating !== 0){
+                        $rating = ($item->rating/$item->perating);
+                    }else{
+                        $rating = 0;
+                    }
+
                     array_push($data, array(
                         'id' => $item->id,
                         'tipe' => $item->tipe,
@@ -560,7 +582,8 @@ class APITempatController extends Controller
                         'foto' => url('/img/tempat') . '/' . $item->foto,
                         'alamat' => $item->alamat,
                         'bidang' => $item->bidang,
-                        'rating' => $item->rating,
+                        'verified' => $verified,
+                        'rating' => $rating,
                         'perating' => $item->perating
                     ));
                 }

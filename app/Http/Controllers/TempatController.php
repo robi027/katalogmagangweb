@@ -319,7 +319,7 @@ class TempatController extends Controller
             2 => 'tipe',
             3 => 'alamat',
             4 => 'bidang',
-            5 => 'tglPublish',
+            5 => 'tglUpdate',
             6 => 'action'
         );
 
@@ -334,7 +334,7 @@ class TempatController extends Controller
 
         if(empty($request->input('search.value'))){
             $tempat = Tempat::select('tempat.id', 'tempat.nama', 
-            'tipe.tipe', 'alamat', 'tempat.tglPublish')
+            'tipe.tipe', 'alamat', 'tempat.tglUpdate')
             ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
             ->offset($start)
             ->limit($limit)
@@ -349,7 +349,7 @@ class TempatController extends Controller
             $search = $request->input('search.value');
 
             $tempat = Tempat::select('tempat.id', 'tempat.nama', 
-            'tipe.tipe', 'alamat', 'tempat.tglPublish')
+            'tipe.tipe', 'alamat', 'tempat.tglUpdate')
             ->selectRaw('GROUP_CONCAT(DISTINCT bidang.bidang SEPARATOR ", ") as bidang')
             ->offset($start)
             ->limit($limit)
@@ -372,7 +372,7 @@ class TempatController extends Controller
                     'tipe' => $iTempat->tipe,
                     'alamat' => $iTempat->alamat,
                     'bidang' => $iTempat->bidang,
-                    'tglPublish' => $iTempat->tglPublish,
+                    'tglUpdate' => $iTempat->tglUpdate,
                     'action' => '<button id="' . $iTempat->id . '" 
                     class="btn btn-xs btn-primary bDetailTempat" 
                     type="button"><i class="fa fa-external-link"></i> Detail</button>'

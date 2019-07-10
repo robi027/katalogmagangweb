@@ -156,7 +156,7 @@ class APIKontribusiController extends Controller
         $query = TempatKontribusi::where([['idTempat', $idTempat],
         ['level', 2]]);
 
-        if($query->count() >= 1){
+        if($query->count() > 1){
             $queryDel = TempatKontribusi::where([
                 ['idTempat', $idTempat], 
                 ['idUser', $idUser]

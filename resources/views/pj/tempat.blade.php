@@ -69,7 +69,7 @@
                                         <th>Tipe</th>
                                         <th>Alamat</th>
                                         <th>Bidang</th>
-                                        <th>Publish</th>
+                                        <th>Update</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -80,7 +80,7 @@
                                         <th>Tipe</th>
                                         <th>Alamat</th>
                                         <th>Bidang</th>
-                                        <th>Publish</th>
+                                        <th>Update</th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>
@@ -312,7 +312,7 @@
                     {'data': 'tipe'},
                     {'data': 'alamat'},
                     {'data': 'bidang'},
-                    {'data': 'tglPublish'},
+                    {'data': 'tglUpdate'},
                     {'data': 'action'}
                 ],
                 columnDefs: [{

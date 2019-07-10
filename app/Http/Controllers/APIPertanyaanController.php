@@ -30,21 +30,27 @@ class APIPertanyaanController extends Controller
         ->joinSub($lastestPertanyaan, 'last_record', function($join){
             $join->on('pertanyaan.tglRecord', 'last_record.last_tglRecord');
         })
+        ->orderBy('pertanyaan.tglRecord', 'DESC')
         ->where('pertanyaan.idPengirim', $idUser)
         ->orWhere('pertanyaan.idPenerima', $idUser)
         ->groupBy('pertanyaan.idChat');
 
         if($query->count() > 0){
             foreach($query->get() as $item){
-                $waktu = ($tglNow - $item->tglRecord) / 60 % 60;
-                $ket = " menit yang lalu";
+                $waktu = floor($tglNow - $item->tglRecord);
+                $ket = " detik yang lalu";
                 if($waktu > 59){
-                    $waktu = ($tglNow - $item->tglRecord) / 3600 % 24;
-                    $ket = " jam yang lalu";
-                    if($waktu > 23){
-                        $waktu = ($tglNow - $item->tglRecord) / 86400 % 7;
-                        $ket = " hari yang lalu";
+                    $waktu = floor(($tglNow - $item->tglRecord) / 60);
+                    $ket = " menit yang lalu";
+                    if($waktu > 60){
+                        $waktu = floor(($tglNow - $item->tglRecord) / 1440);
+                        $ket = " jam yang lalu";
+                        if($waktu > 24){
+                            $waktu = floor(($tglNow - $item->tglRecord) / 86400);
+                            $ket = " hari yang lalu";
+                        }
                     }
+                    
                 }
 
                 array_push($data, array(
@@ -194,14 +200,18 @@ class APIPertanyaanController extends Controller
 
         if($query->count() > 0){
             foreach($query->get() as $item){
-                $waktu = ($tglNow - $item->tglRecord) / 60 % 60;
-                $ket = " menit yang lalu";
+                $waktu = floor($tglNow - $item->tglRecord);
+                $ket = " detik yang lalu";
                 if($waktu > 59){
-                    $waktu = ($tglNow - $item->tglRecord) / 3600 % 24;
-                    $ket = " jam yang lalu";
-                    if($waktu > 23){
-                        $waktu = ($tglNow - $item->tglRecord) / 86400 % 7;
-                        $ket = " hari yang lalu";
+                    $waktu = floor(($tglNow - $item->tglRecord) / 60);
+                    $ket = " menit yang lalu";
+                    if($waktu > 59){
+                        $waktu = floor(($tglNow - $item->tglRecord) / 1440);
+                        $ket = " jam yang lalu";
+                        if($waktu > 23){
+                            $waktu = floor(($tglNow - $item->tglRecord) / 86400);
+                            $ket = " hari yang lalu";
+                        }
                     }
                 }
 
